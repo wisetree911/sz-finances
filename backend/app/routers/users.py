@@ -10,6 +10,10 @@ router = APIRouter(prefix="/users", tags=["Users"])
 async def get_user(session: SessionDep, user_id: int):
     return await UserService.get_one(session=session, user_id=user_id)
 
+@router.get("/")
+async def get_users(session: SessionDep):
+    return await UserService.get_all(session=session)
+
 @router.post("/")
 async def create_user(session: SessionDep, user_schema: UserSchema):
     return await UserService.create(session=session, user_schema=user_schema)
@@ -19,6 +23,3 @@ async def delete_user(session: SessionDep, user_id: int):
     await UserService.delete(session=session, user_id=user_id)
     return
     
-@router.get("/")
-async def get_users(session: SessionDep):
-    return await UserService.get_all(session=session)
