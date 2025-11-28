@@ -1,6 +1,6 @@
 
 from fastapi import FastAPI
-from app.routers import users, assets, portfolios, portfolio_positions, trades, analytics
+from app.api.routers import users, assets, portfolios, portfolio_positions, trades, analytics
 from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 app.add_middleware(
