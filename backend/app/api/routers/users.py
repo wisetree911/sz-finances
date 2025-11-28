@@ -1,37 +1,43 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Depends
 from app.schemas.user import UserCreate, UserResponse
-from app.core.database import SessionDep
+from app.core.database import SessionDep, get_session
 
+from sqlalchemy.ext.asyncio import AsyncSession
 from app.services.users import UserService
 
 router = APIRouter(prefix="/users", tags=["Users"])
+
+def get_user_service(
+        session: AsyncSession = Depends(get_session)
+) -> UserService:
+    return UserService(session=session)
 
 @router.get("/{user_id}",
              response_model=UserResponse,
              summary="Get detailed user info by user_id"
              )
-async def get_user(session: SessionDep, user_id: int):
-    return await UserService.get_by_user_id(session=session, user_id=user_id)
+async def get_user(user_id: int, service: UserService=Depends(get_user_service)):
+    return await service.get_user_by_id(user_id=user_id)
 
 @router.get("/", 
             response_model=list[UserResponse], 
             summary="Get all users detailed info"
             )
-async def get_users(session: SessionDep):
-    return await UserService.get_all(session=session)
+async def get_users(service: UserService=Depends(get_user_service)):
+    return await service.get_all()
 
 @router.post("/", 
              response_model=UserResponse, 
              summary="Create user"
              )
-async def create_user(session: SessionDep, user_schema: UserCreate):
-    return await UserService.create_user(session=session, user_schema=user_schema)
+async def create_user(user_schema: UserCreate, service: UserService=Depends(get_user_service)):
+    return await service.create_user(user_schema=user_schema)
 
 @router.delete("/{user_id}", 
                status_code=status.HTTP_204_NO_CONTENT, 
                summary="Delete user by user_id"
                )
-async def delete_user(session: SessionDep, user_id: int):
-    await UserService.delete_user(session=session, user_id=user_id)
+async def delete_user(user_id: int, service: UserService=Depends(get_user_service)):
+    await service.delete_user(user_id=user_id)
     return
     
