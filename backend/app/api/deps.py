@@ -12,7 +12,7 @@ def get_user_service(
 ) -> UserService:
     return UserService(session=session)
 
-def get_porfolio_session(session: AsyncSession = Depends(get_session)) -> PortfolioService:
+def get_porfolio_service(session: AsyncSession = Depends(get_session)) -> PortfolioService:
     return PortfolioService(session=session)
 
 def get_trade_service(
