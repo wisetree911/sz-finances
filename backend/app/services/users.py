@@ -1,8 +1,9 @@
+from turtle import onclick
 from requests import session
 from shared.repositories.user import UserRepository
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException
-
+from app.schemas.user import UserCreate, UserUpdate
 class UserService:
     def __init__(self, session: AsyncSession):
         self.session = session
@@ -17,14 +18,17 @@ class UserService:
             raise HTTPException(404, "SZ user not found")
         return user
 
-    async def create_user(self, user_schema):
-        return await self.repo.create(
-            name=user_schema.name,
-            age=user_schema.age
-            )
+    async def create_user(self, obj_in: UserCreate):
+        return await self.repo.create(obj_in=obj_in)
 
     async def delete_user(self, user_id: int):
         user = await self.repo.get_by_id(user_id=user_id)
         if user is None:
             raise HTTPException(404, "SZ user not found")
         await self.repo.delete(user=user)
+
+    async def update(self, user_id: int, payload: UserUpdate):
+        user = await self.repo.get_by_id(user_id=user_id)
+        if user is None: raise HTTPException(404, "SZ user not found")
+        await self.repo.update(user=user, obj_in=payload)
+        return user
