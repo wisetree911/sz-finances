@@ -12,7 +12,18 @@ class AnalyticsService:
         self.portfolio_position_repo=PortfolioPositionRepository(session=session)
         
     async def portfolio_snapshot(self, portfolio_id: int):
-        pass
+        portfolio_positions = self.portfolio_position_repo.get_by_portfolio_id(portfolio_id=portfolio_id)
+        total_value = 0
+        for pos in portfolio_positions:
+            total_value += self.asset_price_repo.get_by_id
+
+        # get total_value_invested
+        # total_money_now = sum[pos.asset_id.get_current_price() for pos in get_portfolio_positions_by_portfolio_id]
+        # total_money_invested = sum[pos.avg_price * pos.quantity for pos in get_portfolio_positions_by_portfolio_id]
+        # total_profit = total_money_now - total_money_invested 
+        # total_profit_percent = total_profit / total_money_invested * 100
+        # top3 = get_portfolio_positions.sort(by quantity * avg_price desc)
+        # total_value + total_invested + total_profit + total_profit_percent for each of 3 positions
 
     async def sector_distribution(self, portfolio_id):
         pass
@@ -56,3 +67,41 @@ class AnalyticsService:
         return response
 
 
+# {
+#   "portfolio_id": 12,
+#   "name": "Основной портфель",
+#   "total_value": 512345.67, -> portfolio_positions.quantity * assets.asset_id.price
+#   "total_profit": 12345.67, -> portfolio_positions.quantity * assets.asset_id.price - total_value 
+#   "total_profit_percent": 2.47, 
+
+#   "invested_value": 500000.00, -> portfolio_positions.avg_price * portfolio_positions.quantity
+
+#   "currency": "RUB",
+
+#   "positions_count": 8, count_rows with portfolio_id = !
+
+#   "top_positions": [
+#     {
+#       "asset_id": 1,
+#       "ticker": "GAZP",
+#       "full_name": "ПАО Газпром",
+#       "quantity": 40,
+#       "avg_buy_price": 152.95,
+#       "current_price": 163.50,
+#       "current_value": 6540.00,
+#       "profit": 420.00,
+#       "profit_percent": 6.86
+#     },
+#     {
+#       "asset_id": 2,
+#       "ticker": "SBER",
+#       "full_name": "Сбербанк",
+#       "quantity": 75,
+#       "avg_buy_price": 287.86,
+#       "current_price": 305.10,
+#       "current_value": 22882.50,
+#       "profit": 1293.00,
+#       "profit_percent": 5.99
+#     }
+#   ]
+# }
