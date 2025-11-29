@@ -11,6 +11,7 @@ class Portfolio(Base):
         ForeignKey("users.id", ondelete="CASCADE")
     )
     name: Mapped[str] = mapped_column(Text, nullable=False)
+    currency: Mapped[str] = mapped_column(Text, default="RUB", nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=datetime.utcnow
     )

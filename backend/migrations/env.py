@@ -5,15 +5,15 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import create_async_engine
 import asyncio
 
-from backend.app.core.database import Base
-from backend.app.core.config import settings
+from app.core.database import Base
+from app.core.config import settings
 
-from backend.app.models.user import User
-from backend.app.models.asset import Asset
-from backend.app.models.asset_price import AssetPrice
-from backend.app.models.portfolio import Portfolio
-from backend.app.models.portfolio_position import PortfolioPosition
-from backend.app.models.trade import Trade
+from shared.models.user import User
+from shared.models.asset import Asset
+from shared.models.asset_price import AssetPrice
+from shared.models.portfolio import Portfolio
+from shared.models.portfolio_position import PortfolioPosition
+from shared.models.trade import Trade
 
 
 config = context.config
