@@ -1,50 +1,49 @@
+from requests import session
 from sqlalchemy import select
 from shared.models.asset import Asset
+from sqlalchemy.ext.asyncio import AsyncSession
 
 class AssetRepository:
-    @staticmethod
-    async def get_by_id(asset_id: int, session):
+    def __init__(self, session: AsyncSession):
+        self.session = session
+
+    async def get_by_id(self, asset_id: int):
         query = select(Asset).where(Asset.id == asset_id)
-        result = await session.execute(query)
+        result = await self.session.execute(query)
         asset = result.scalar_one_or_none()
         return asset
     
-    @staticmethod
-    async def get_all(session):
+    async def get_all(self):
         query = select(Asset)
-        result = await session.execute(query)
+        result = await self.session.execute(query)
         return result.scalars().all()
     
-    @staticmethod
-    async def get_by_ticker(ticker: str, session):
+    async def get_by_ticker(self, ticker: str):
         query = select(Asset).where(Asset.ticker == ticker)
-        result = await session.execute(query)
+        result = await self.session.execute(query)
         asset = result.scalar_one_or_none()
         return asset
     
-    @staticmethod
-    async def create(session, ticker: str, full_name: str, type: str):
+    async def create(self, ticker: str, full_name: str, type: str):
         new_asset = Asset(
             ticker=ticker, 
             full_name=full_name,
             type=type
             )
-        session.add(new_asset)
-        await session.commit()
-        await session.refresh(new_asset)
+        self.session.add(new_asset)
+        await self.session.commit()
+        await self.session.refresh(new_asset)
         return new_asset
     
-    @staticmethod
-    async def delete(session, asset: Asset):
-        await session.delete(asset)
-        await session.commit()
+    async def delete(self, asset: Asset):
+        await self.session.delete(asset)
+        await self.session.commit()
 
     
-        
-    @staticmethod
-    async def update(session, asset: Asset, data: dict):
+    async def update(self, asset: Asset, data: dict):
         for field, value in data.items():
             setattr(asset, field, value)
-        await session.flush()
+        await self.session.commit()
+        await self.session.refresh(asset)
         return asset
     
