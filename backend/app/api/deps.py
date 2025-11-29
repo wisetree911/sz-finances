@@ -3,6 +3,7 @@ from app.services.users import UserService
 from app.services.portfolio_positions import PortfolioPositionService
 from app.services.assets import AssetService
 from app.services.trades import TradeService
+from app.services.portfolios import PortfolioService
 from fastapi import Depends
 from app.core.database import get_session
 
@@ -10,6 +11,9 @@ def get_user_service(
         session: AsyncSession = Depends(get_session)
 ) -> UserService:
     return UserService(session=session)
+
+def get_porfolio_session(session: AsyncSession = Depends(get_session)) -> PortfolioService:
+    return PortfolioService(session=session)
 
 def get_trade_service(
         session: AsyncSession = Depends(get_session)

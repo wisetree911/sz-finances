@@ -3,7 +3,6 @@ from shared.repositories.asset_price import AssetPriceRepository
 from shared.repositories.portfolio import PortfolioRepository
 from shared.repositories.portfolio_position import PortfolioPositionRepository
 class AnalyticsService:
-
     @staticmethod
     async def portfolio_dynamics(session, user_id: int):
         portfolios = await PortfolioRepository.get_by_user_id(session=session, user_id=user_id)

@@ -1,12 +1,8 @@
 from fastapi import APIRouter, status, Depends
 from app.schemas.portfolio import PortfolioCreate, PortfolioResponse
-from app.core.database import SessionDep, get_session
-from sqlalchemy.ext.asyncio import AsyncSession
 from app.services.portfolios import PortfolioService
+from app.api.deps import get_porfolio_session
 router = APIRouter(prefix="/portfolios", tags=["Portfolios"])
-
-def get_porfolio_session(session: AsyncSession = Depends(get_session)) -> PortfolioService:
-    return PortfolioService(session=session)
 
 @router.get("/{portfolio_id}", response_model=PortfolioResponse)
 async def get_by_id(portfolio_id: int, service: PortfolioService=Depends(get_porfolio_session)):

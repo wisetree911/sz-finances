@@ -5,5 +5,5 @@ router = APIRouter(prefix="/analytics", tags=["Analytics"])
 
 
 @router.get("/users/{user_id}/portfolio/analytics/dynamics")
-async def get_dynamics(session: SessionDep, user_id: int):
+async def get_dynamics(user_id: int):
     return await AnalyticsService.portfolio_dynamics(session, user_id)
