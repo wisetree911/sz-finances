@@ -9,7 +9,7 @@ def get_user_service(
 ) -> UserService:
     return UserService(session=session)
 
-async def get_trades_session(
+def get_trades_session(
         session: AsyncSession = Depends(get_session)
 ) -> TradeService:
     return TradeService(session=session)
