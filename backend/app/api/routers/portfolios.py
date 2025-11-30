@@ -29,3 +29,5 @@ async def update_portfolio(portfolio_id: int, payload: PortfolioUpdate, service:
 async def get_user_portfolios(user_id: int, service: PortfolioService=Depends(get_porfolio_service)):
     return await service.get_user_portfolios(user_id=user_id)
 
+
+

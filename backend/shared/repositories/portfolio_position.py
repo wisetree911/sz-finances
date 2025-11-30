@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, func
 from shared.models.portfolio_position import PortfolioPosition
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.schemas.portfolio_position import PortfolioPositionUpdate, PortfolioPositionCreate
@@ -40,3 +40,14 @@ class PortfolioPositionRepository:
         query = select(PortfolioPosition).where(PortfolioPosition.portfolio_id == portfolio_id)
         portfolio_positions = await self.session.execute(query)
         return portfolio_positions.scalars().all()
+    
+    # gives asset_id from a concrete portfolio_position
+    async def get_position_asset_id(self, portfolio_position_id: int):
+        query = select(PortfolioPosition).where(PortfolioPosition.id == portfolio_position_id)
+        position = await self.session.execute(query)
+        return position.scalar_one().asset_id
+    
+    async def get_unique_assets_count_by_portfolio_id(self, portfolio_id: int):
+        query = select(func.count()).select_from(PortfolioPosition).where(PortfolioPosition.portfolio_id == portfolio_id)
+        result = await self.session.execute(query)
+        return result.scalar_one_or_none()

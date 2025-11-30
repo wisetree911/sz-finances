@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, func
 from shared.models.portfolio import Portfolio
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.schemas.portfolio import PortfolioCreate, PortfolioUpdate
@@ -41,5 +41,6 @@ class PortfolioRepository:
         result = await self.session.execute(query)
         portfolios = result.scalars().all()
         return portfolios
+    
     
 

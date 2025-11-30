@@ -1,22 +1,69 @@
 from datetime import datetime, timedelta
+from locale import currency
+from turtle import position
 from shared.repositories.asset_price import AssetPriceRepository
 from shared.repositories.portfolio import PortfolioRepository
+from shared.repositories.asset import AssetRepository
 from shared.repositories.portfolio_position import PortfolioPositionRepository
 from sqlalchemy.ext.asyncio import AsyncSession
-
+from fastapi import HTTPException
+from app.schemas.analytics import PortfolioShapshotResponse, TopPosition
 class AnalyticsService:
     def __init__(self, session: AsyncSession):
         self.session=session
         self.asset_price_repo=AssetPriceRepository(session=session)
         self.portfolio_repo=PortfolioRepository(session=session)
         self.portfolio_position_repo=PortfolioPositionRepository(session=session)
-        
-    async def portfolio_snapshot(self, portfolio_id: int):
-        portfolio_positions = self.portfolio_position_repo.get_by_portfolio_id(portfolio_id=portfolio_id)
-        total_value = 0
-        for pos in portfolio_positions:
-            total_value += self.asset_price_repo.get_by_id
+        self.asset_repo=AssetRepository(session=session)
 
+    async def portfolio_snapshot(self, portfolio_id: int):
+        portfolio = await self.portfolio_repo.get_by_id(portfolio_id=portfolio_id)
+        positions = await self.portfolio_position_repo.get_by_portfolio_id(portfolio_id)
+        tops =list()
+        if not positions: raise HTTPException(404, "SZ no positions were found")
+        total_value = int()
+        prices = {} # asset_id : current price
+        for pos in positions:
+            price = await self.asset_price_repo.get_last_price_by_id(pos.asset_id) * pos.quantity
+            prices[pos.asset_id] = price
+
+        total_value = sum(prices.values())
+        invested_value = 0
+        for pos in positions:
+            cur_asset = await self.asset_repo.get_by_id(pos.asset_id)
+
+            new_top = TopPosition(
+                asset_id=pos.asset_id,
+                ticker=cur_asset.ticker,
+                full_name=cur_asset.full_name,
+                quantity=pos.quantity,
+                avg_buy_price=pos.avg_price,
+                current_price=prices[cur_asset.id],
+                current_value=pos.quantity * prices[cur_asset.id],
+                profit=pos.quantity * prices[cur_asset.id] - pos.quantity * pos.avg_price,
+                profit_percent=pos.quantity * prices[cur_asset.id] - pos.quantity * pos.avg_price / pos.quantity * pos.avg_price * 100
+            )
+            tops.append(new_top)
+
+        invested_value = sum([pos.avg_price * pos.quantity for pos in positions])
+        total_profit = total_value - invested_value
+        total_profit_percent = total_profit / invested_value * 100
+        count = await self.portfolio_position_repo.get_unique_assets_count_by_portfolio_id(portfolio_id=portfolio_id)
+                # get top 3 positions by part
+
+
+        return PortfolioShapshotResponse(
+            portfolio_id=portfolio.id,
+            name=portfolio.name,
+            total_value=total_value,
+            total_profit=total_profit,
+            total_profit_percent=total_profit_percent,
+            invested_value=invested_value,
+            currency=portfolio.currency,
+            positions_count=count,
+            top_positions= tops
+
+        )
         # get total_value_invested
         # total_money_now = sum[pos.asset_id.get_current_price() for pos in get_portfolio_positions_by_portfolio_id]
         # total_money_invested = sum[pos.avg_price * pos.quantity for pos in get_portfolio_positions_by_portfolio_id]

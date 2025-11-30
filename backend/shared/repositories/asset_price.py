@@ -1,3 +1,4 @@
+from requests import session
 from sqlalchemy import select
 from shared.models.asset_price import AssetPrice
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -19,7 +20,7 @@ class AssetPriceRepository:
         result = await self.session.execute(query)
         return result.scalars().all()
     
-    async def get_by_id(self, asset_id: int):
+    async def get_by_id(self, asset_id: int) -> AssetPrice:
         query = select(AssetPrice).where(AssetPrice.asset_id == asset_id)
         result = await self.session.execute(query)
         return result.scalar_one_or_none()
@@ -30,3 +31,7 @@ class AssetPriceRepository:
         prices = await self.session.execute(query)
         return prices.scalars().all()
     
+    async def get_last_price_by_id(self, asset_id: int) -> float | None:
+        query = select(AssetPrice.price).where(AssetPrice.asset_id == asset_id).order_by(AssetPrice.timestamp.desc()).limit(1)
+        result = await self.session.execute(query)
+        return result.scalar_one_or_none()
