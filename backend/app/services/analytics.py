@@ -16,43 +16,37 @@ class AnalyticsService:
         self.portfolio_position_repo=PortfolioPositionRepository(session=session)
         self.asset_repo=AssetRepository(session=session)
 
-    async def portfolio_snapshot(self, portfolio_id: int):
-        # получаю портфолио 1 обращение
-        # получаю список позиций 1 обращение
-        # получаю список последних цен по позициям и сохраняю 1 обращение
-        # получаю инфу по каждому активу Х обращений
-        # Х + 3
+    async def portfolio_snapshot(self, portfolio_id: int): # добавить округление и реально выводить топ три позиции
         portfolio = await self.portfolio_repo.get_by_id(portfolio_id=portfolio_id)
         positions = await self.portfolio_position_repo.get_by_portfolio_id(portfolio_id)
         tops=list()
         if not positions: raise HTTPException(404, "SZ no positions were found")
         total_value = int()
-        prices = await self.asset_price_repo.get_prices_dict_by_ids(pos.asset_id for pos in positions)
+        asset_ids=[pos.asset_id for pos in positions]
+        prices = await self.asset_price_repo.get_prices_dict_by_ids(asset_ids)
         
         total_value = sum(pos.quantity * prices[pos.asset_id] for pos in positions)
         invested_value = sum([pos.avg_price * pos.quantity for pos in positions])
         total_profit = total_value - invested_value
         total_profit_percent = total_profit / invested_value * 100
         positions_count=len(positions)
-
-        for pos in positions: # нужно получать список орм ассетов по портфолио айди (1 запрос вместо икс)
-            cur_asset = await self.asset_repo.get_by_id(pos.asset_id)
-
+        assets = await self.asset_repo.get_assets_by_ids(asset_ids)
+        for pos in positions:
             new_top = TopPosition(
                 asset_id=pos.asset_id,
-                ticker=cur_asset.ticker,
-                full_name=cur_asset.full_name,
+                ticker=assets[pos.asset_id].ticker,
+                full_name=assets[pos.asset_id].full_name,
                 quantity=pos.quantity,
                 avg_buy_price=pos.avg_price,
-                current_price=prices[cur_asset.id],
-                current_value=pos.quantity * prices[cur_asset.id],
-                profit=pos.quantity * prices[cur_asset.id] - pos.quantity * pos.avg_price,
-                profit_percent=pos.quantity * prices[cur_asset.id] - pos.quantity * pos.avg_price / pos.quantity * pos.avg_price * 100
+                current_price=prices[pos.asset_id],
+                current_value=pos.quantity * prices[pos.asset_id],
+                profit=pos.quantity * prices[pos.asset_id] - pos.quantity * pos.avg_price,
+                profit_percent = ((prices[pos.asset_id] - pos.avg_price) / pos.avg_price) * 100
             )
             tops.append(new_top)
 
         
-        
+
         return PortfolioShapshotResponse(
             portfolio_id=portfolio.id,
             name=portfolio.name,
