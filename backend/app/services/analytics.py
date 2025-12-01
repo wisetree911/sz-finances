@@ -16,7 +16,7 @@ class AnalyticsService:
         self.portfolio_position_repo=PortfolioPositionRepository(session=session)
         self.asset_repo=AssetRepository(session=session)
 
-    async def portfolio_snapshot(self, portfolio_id: int): # добавить округление и реально выводить топ три позиции
+    async def portfolio_snapshot(self, portfolio_id: int): # добавить округление и реально выводить топ три позиции и получать реально последние цены
         portfolio = await self.portfolio_repo.get_by_id(portfolio_id=portfolio_id)
         positions = await self.portfolio_position_repo.get_by_portfolio_id(portfolio_id)
         tops=list()
@@ -30,7 +30,7 @@ class AnalyticsService:
         total_profit = total_value - invested_value
         total_profit_percent = total_profit / invested_value * 100
         positions_count=len(positions)
-        assets = await self.asset_repo.get_assets_by_ids(asset_ids)
+        assets = await self.asset_repo.get_assets_dict_by_ids(asset_ids)
         for pos in positions:
             new_top = TopPosition(
                 asset_id=pos.asset_id,

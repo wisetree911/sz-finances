@@ -41,7 +41,7 @@ class AssetRepository:
         result = await self.session.execute(query)
         return result.scalar_one_or_none()
     
-    async def get_assets_by_ids(self, ids: List[int]) -> Dict[int, Asset]:
+    async def get_assets_dict_by_ids(self, ids: List[int]) -> Dict[int, Asset]:
         query = select(Asset).where(Asset.id.in_(ids))
         result = await self.session.execute(query)
         rows = result.scalars().all()

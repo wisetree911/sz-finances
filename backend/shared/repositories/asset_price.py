@@ -43,7 +43,7 @@ class AssetPriceRepository:
         query = select(
             AssetPrice.asset_id,
             AssetPrice.price
-        ).where(AssetPrice.asset_id.in_(asset_ids)).order_by(AssetPrice.asset_id, AssetPrice.timestamp.desc())
+        ).distinct(AssetPrice.asset_id).where(AssetPrice.asset_id.in_(asset_ids)).order_by(AssetPrice.asset_id, AssetPrice.timestamp.desc())
         result = await self.session.execute(query)
         rows=result.all()
         return {asset_id: price for asset_id, price in rows}
