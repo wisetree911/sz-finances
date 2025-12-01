@@ -16,7 +16,7 @@ class AnalyticsService:
         self.portfolio_position_repo=PortfolioPositionRepository(session=session)
         self.asset_repo=AssetRepository(session=session)
 
-    async def portfolio_snapshot(self, portfolio_id: int): # добавить округление и реально выводить топ три позиции и получать реально последние цены
+    async def portfolio_snapshot(self, portfolio_id: int): # рассмотреть сырый sql запросы для аналитики и свой репо
         portfolio = await self.portfolio_repo.get_by_id(portfolio_id=portfolio_id)
         if portfolio is None: raise HTTPException(404, "SZ portfolio not found")
         positions = await self.portfolio_position_repo.get_by_portfolio_id(portfolio_id)
@@ -34,7 +34,7 @@ class AnalyticsService:
         prices = await self.asset_price_repo.get_prices_dict_by_ids(asset_ids)
         
         total_value = sum(pos.quantity * prices[pos.asset_id] for pos in positions)
-        invested_value = sum([pos.avg_price * pos.quantity for pos in positions])
+        invested_value = sum(pos.avg_price * pos.quantity for pos in positions)
         total_profit = total_value - invested_value
         total_profit_percent = total_profit / invested_value * 100
         positions_count=len(positions)
@@ -53,6 +53,8 @@ class AnalyticsService:
                 profit_percent = ((prices[pos.asset_id] - pos.avg_price) / pos.avg_price) * 100
             )
             tops.append(new_top)
+        tops = sorted(tops, key=lambda pos: pos.current_value, reverse=True)
+        top_three=tops[:3]
 
         return PortfolioShapshotResponse(
             portfolio_id=portfolio.id,
@@ -63,7 +65,7 @@ class AnalyticsService:
             invested_value=invested_value,
             currency=portfolio.currency,
             positions_count=positions_count,
-            top_positions= tops
+            top_positions=top_three
         )
     
 
