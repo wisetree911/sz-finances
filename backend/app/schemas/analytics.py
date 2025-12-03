@@ -74,3 +74,11 @@ class PortfolioDynamicsResponse(BaseModel):
     portfolio_id : int=Field(..., description="portfolio ID")
     name: str=Field(..., description="portfolio name")
     data: List[PortfolioPrice]
+
+    @classmethod
+    def empty(cls, portfolio):
+        return cls(
+            portfolio_id = portfolio.id,
+            name = portfolio.name,
+            data = []
+        )

@@ -82,9 +82,11 @@ class AnalyticsService:
 
     async def sector_distribution(self, portfolio_id: int) -> SectorDistributionResponse:
         portfolio = await self.portfolio_repo.get_by_id(portfolio_id)
-        if portfolio is None: raise HTTPException(404, "SZ portfolio not found")
+        if portfolio is None:
+            raise HTTPException(404, "SZ portfolio not found")
         positions = await self.portfolio_position_repo.get_by_portfolio_id(portfolio_id)
-        if not positions: return SectorDistributionResponse.empty(portfolio)
+        if not positions:
+            return SectorDistributionResponse.empty(portfolio)
         asset_ids=[pos.asset_id for pos in positions]
         prices = await self.asset_price_repo.get_prices_dict_by_ids(asset_ids)
         total_value = sum(pos.quantity * prices[pos.asset_id] for pos in positions)
@@ -115,7 +117,11 @@ class AnalyticsService:
 
     async def portfolio_dynamics_for_24h(self, portfolio_id: int) -> PortfolioDynamicsResponse:
         portfolio = await self.portfolio_repo.get_by_id(portfolio_id=portfolio_id)
+        if portfolio is None:
+            raise HTTPException(404, "SZ portfolio not found")
         positions = await self.portfolio_position_repo.get_by_portfolio_id(portfolio_id=portfolio_id)
+        if not positions:
+            return PortfolioDynamicsResponse.empty(portfolio=portfolio)
         asset_ids = [pos.asset_id for pos in positions]
         asset_prices = await self.asset_price_repo.get_prices_since(ids=asset_ids, since=datetime.utcnow() - timedelta(days=1) )
         # берем 96 точек от сейчас до сейчас-24 часа, интервал 15 минут, если цены нет у какого то актива в конкретной точке то зануляем всю точку (затычка)
