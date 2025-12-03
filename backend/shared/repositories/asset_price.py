@@ -1,5 +1,3 @@
-from sys import float_info
-from requests import session
 from sqlalchemy import select
 from shared.models.asset_price import AssetPrice
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -11,12 +9,12 @@ class AssetPriceRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def create(self, obj_in: AssetPriceCreate):
+    async def create(self, obj_in: AssetPriceCreate) -> AssetPrice:
         obj=AssetPrice(**obj_in.dict())
         self.session.add(obj)
         return obj
     
-    async def get_all(self):
+    async def get_all(self) -> List[AssetPrice]:
         query = select(AssetPrice)
         result = await self.session.execute(query)
         return result.scalars().all()
