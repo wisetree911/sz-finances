@@ -4,7 +4,8 @@ from datetime import datetime
 class PortfolioBase(BaseModel):
     user_id: int
     name: str
-
+    currency: str
+    
 class PortfolioCreate(PortfolioBase):
     pass
 
