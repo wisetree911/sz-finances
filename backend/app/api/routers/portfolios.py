@@ -2,7 +2,7 @@ from fastapi import APIRouter, status, Depends
 from app.schemas.portfolio import PortfolioCreate, PortfolioResponse, PortfolioUpdate
 from app.services.portfolios import PortfolioService
 from app.api.deps import get_porfolio_service
-router = APIRouter(prefix="/portfolios", tags=["Portfolios"])
+router = APIRouter(prefix="api/portfolios", tags=["Portfolios"])
 
 @router.get("/{portfolio_id}", response_model=PortfolioResponse)
 async def get_by_id(portfolio_id: int, service: PortfolioService=Depends(get_porfolio_service)):
