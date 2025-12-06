@@ -12,7 +12,6 @@ from shared.models.user import User
 from shared.models.asset import Asset
 from shared.models.asset_price import AssetPrice
 from shared.models.portfolio import Portfolio
-from shared.models.portfolio_position import PortfolioPosition
 from shared.models.trade import Trade
 
 
