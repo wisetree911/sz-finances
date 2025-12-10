@@ -32,16 +32,43 @@ from collections import deque
 # def calc_position_weight_in_portfolio(position: PortfolioPosition, current_prices: Dict[int, float], total_value: float) -> float:
 #     return ((position.quantity * current_prices[position.asset_id]) / total_value) * 100
 
-def get_portfolio_purchase_price(portfolio_trades: List[Trade]):
-    total = 0
-    for trade in portfolio_trades:
-        if trade.direction == "buy":
-            total += trade.price * trade.quantity
-        elif trade.direction == "sell":
-            total -= trade.price * trade.quantity
-    return total
+def calc_cost_basis(portfolio_trades: List[Trade]) -> float:
+    id_to_lot: Dict[int, deque[dict]] = {}
 
-# def get_portfolio_positions_count(portfolio_trades: List[Trade]):
+    for t in portfolio_trades:
+        if t.asset_id not in id_to_lot:
+            id_to_lot[t.asset_id] = deque()
+
+        lots = id_to_lot[t.asset_id]
+
+        if t.direction == "buy":
+            lots.append({"qty": t.quantity, "price": t.price})
+
+        elif t.direction == "sell":
+            left_to_sell = t.quantity
+
+            while left_to_sell > 0:
+                first_lot = lots[0]
+                left_in_lot = first_lot["qty"]
+
+                if left_in_lot > left_to_sell:
+                    first_lot["qty"] = left_in_lot - left_to_sell
+                    left_to_sell = 0
+                elif left_in_lot < left_to_sell:
+                    left_to_sell -= left_in_lot
+                    lots.popleft()
+                else:
+                    left_to_sell -= left_in_lot
+                    lots.popleft()
+
+
+    cost_basis = 0
+    for lots in id_to_lot.values():
+        for lot in lots:
+            cost_basis += lot["qty"] * lot["price"]
+
+    return cost_basis
+
     
 def get_asset_id_to_quantity_dict(portfolio_trades: List[Trade]):
     asset_id_to_quantity = dict()
@@ -85,3 +112,9 @@ def calc_unrealized_pnl(portfolio_trades: List[Trade], asset_prices: Dict[int, f
     absolute_profit = sum(asset_prices[a_id] * quantities[a_id] - mid_prices[a_id] * quantities[a_id] for a_id in id_to_lot.keys())
     print(id_to_lot)
     return absolute_profit
+
+def calc_market_value(id_to_price: Dict[int, float], id_to_qty: Dict[int, int]):
+    current_value = 0
+    for asset_id, quantity in id_to_qty.items():
+            current_value += id_to_price[asset_id] * quantity
+    return current_value
