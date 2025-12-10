@@ -67,9 +67,9 @@ class AnalyticsService:
             portfolio_id=portfolio.id,
             name=portfolio.name,
             total_value=current_value,
-            total_profit=profit,
-            total_profit_percent=(profit / portfolio_purchase_price) * 100,
-            invested_value=portfolio_purchase_price ,
+            unrealized_pnl=profit,
+            unrealized_return_pct=(profit / portfolio_purchase_price) * 100,
+            cost_basis=portfolio_purchase_price ,
             currency=portfolio.currency,
             positions_count=count,
             top_positions=resp
