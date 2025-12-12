@@ -3,15 +3,15 @@ from pydantic import BaseModel, Field
 from typing import List
 
 class TopPosition(BaseModel):
-    asset_id: int =Field(..., description="asset ID")
+    asset_id: int =Field(..., description="asset ID in position (inner)")
     ticker: str =Field(..., description="asset ticker, for example: GAZP")
-    full_name: str=Field(..., description="full name of asset")
-    quantity: int=Field(..., description="quantity of asset")
-    avg_buy_price: float=Field(..., description="average buy price of asset")
-    asset_market_price: float=Field(..., description="current price of asset")
-    market_value: float=Field(..., description="current value of position (quantity * current_price)")
+    full_name: str=Field(..., description="full name of asset in position")
+    quantity: int=Field(..., description="quantity of asset in position")
+    avg_buy_price: float=Field(..., description="average buy price of asset in position")
+    asset_market_price: float=Field(..., description="current market price of 1 asset in position")
+    market_value: float=Field(..., description="current market price of all assets in position")
     unrealized_pnl: float= Field(..., description="unrealized PNL of portfolio position")
-    unrealized_return_pct: float=Field(..., description="profit of asset in percents")
+    unrealized_return_pct: float=Field(..., description=" profit of asset in percents")
     weight_pct: float=Field(..., description="weight of asset in portfolio in percents")
 
 
@@ -31,10 +31,10 @@ class PortfolioShapshotResponse(BaseModel):
         return cls(
             portfolio_id = portfolio.id,
             name = portfolio.name,
-            total_value = 0,
-            total_profit = 0,
-            total_profit_percent = 0,
-            invested_value = 0,
+            market_value = 0,
+            unrealized_pnl = 0,
+            unrealized_return_pct = 0,
+            cost_basis = 0,
             currency = portfolio.currency,
             positions_count = 0,
             top_positions = []
