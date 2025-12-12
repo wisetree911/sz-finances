@@ -7,7 +7,7 @@ from shared.repositories.asset import AssetRepository
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException
 from app.schemas.analytics import PortfolioShapshotResponse, TopPosition, SectorDistributionResponse, SectorPosition, PortfolioPrice, PortfolioDynamicsResponse
-from app.analytics.portfolio_snapshot import get_asset_id_to_quantity_dict, calc_market_value
+# from app.analytics.portfolio_snapshot import get_asset_id_to_quantity_dict, calc_market_value
 from shared.repositories.trade import TradeRepository
 from app.analytics.models import AssetPosition, Lot, TradeDTO
 from app.analytics.analytics_calc import calc_unrealized_pnl, build_only_buy_positions, calc_cost_basis, calc_market_value, calc_unrealized_return_pct
