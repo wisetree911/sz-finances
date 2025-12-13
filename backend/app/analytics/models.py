@@ -26,7 +26,7 @@ class Lot:
     price: float
 
 @dataclass
-class SnapshotPositionAn:
+class PortfolioPositionPrepared:
     asset_id: int
     asset_market_price: float
     ticker: str
