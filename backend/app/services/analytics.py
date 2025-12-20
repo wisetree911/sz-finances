@@ -28,33 +28,6 @@ from app.analytics.analytics_calc import  (
 from datetime import datetime, timedelta
 from typing import Dict
 
-# def get_timestamps_count_24h(ts_now: datetime) -> int:
-#     ts_from = ts_now - timedelta(days=1)
-#     count = int ((ts_now - ts_from).total_seconds() / 60 / 15)
-#     return count
-
-# def get_sorted_timeseries_24h(ts_now: datetime, count: int):
-#     time_series = []
-#     for i in range(count):
-#         ts = (ts_now - timedelta(minutes=i*15)).replace(second=0, microsecond=0)
-#         time_series.append(ts)
-#     time_series = sorted(time_series, reverse=False)
-#     return time_series
-
-# def build_time_series(timestamp_now, asset_prices, dynamic_positions):
-#     timestamps_count = get_timestamps_count_24h(ts_now=timestamp_now)
-#     time_series = get_sorted_timeseries_24h(ts_now=timestamp_now, count=timestamps_count)
-#     asset_id_to_quantity = {pos.asset_id : pos.quantity for pos in dynamic_positions}
-#     data = []
-#     for ts in time_series:
-#         total_price = int()
-#         for asset_price in asset_prices:
-#             timestamp = asset_price.timestamp.replace(second=0, microsecond=0)
-#             if timestamp == ts:
-#                 total_price += asset_price.price * asset_id_to_quantity[asset_price.asset_id]
-#         data.append(PortfolioPrice(timestamp=ts, total_value=total_price))
-#     return data
-        
 # убрать всю аналитику отсюлаёёда
 class AnalyticsService:
     def __init__(self, session: AsyncSession):
