@@ -5,31 +5,19 @@ from app.services.users import UserService
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
-@router.get("/{user_id}",
-             response_model=UserResponse,
-             summary="Get detailed user info by user_id"
-             )
-async def get_user(user_id: int, service: UserService=Depends(get_user_service)):
+@router.get("/{user_id}",summary="Get detailed user info by user_id")
+async def get_user(user_id: int, service: UserService=Depends(get_user_service)) -> UserResponse:
     return await service.get_by_id(user_id=user_id)
 
-@router.get("/", 
-            response_model=list[UserResponse], 
-            summary="Get all users detailed info"
-            )
-async def get_users(service: UserService=Depends(get_user_service)):
+@router.get("/", summary="Get all users detailed info")
+async def get_users(service: UserService=Depends(get_user_service)) -> list[UserResponse]:
     return await service.get_all()
 
-@router.post("/", 
-             response_model=UserResponse, 
-             summary="Create user"
-             )
-async def create_user(payload: UserCreate, service: UserService=Depends(get_user_service)):
+@router.post("/", summary="Create user")
+async def create_user(payload: UserCreate, service: UserService=Depends(get_user_service)) -> UserResponse:
     return await service.create(obj_in=payload)
 
-@router.delete("/{user_id}", 
-               status_code=status.HTTP_204_NO_CONTENT, 
-               summary="Delete user by user_id"
-               )
+@router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT, summary="Delete user by user_id")
 async def delete_user(user_id: int, service: UserService=Depends(get_user_service)):
     await service.delete_user(user_id=user_id)
     return
