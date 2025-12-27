@@ -29,3 +29,28 @@ def get_analytics_service(
         session: AsyncSession=Depends(get_session)
 ) -> AnalyticsService:
     return AnalyticsService(session=session)
+
+
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi import HTTPException
+from jose import jwt, JWTError
+from app.core.config import settings
+from fastapi import status
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
+
+SECRET_KEY = settings.SECRET_KEY
+ALGORITHM = settings.ALGORITHM
+
+async def get_current_user(token: str = Depends(oauth2_scheme), service: UserService = Depends(get_user_service)):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id = payload.get("sub")
+        if not user_id:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="ni")
+    except JWTError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="nig")
+
+    user = await service.get_by_id(int(user_id))
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="nigg")
+    return user
