@@ -5,7 +5,6 @@ from fastapi.security import OAuth2PasswordRequestForm
 from passlib.context import CryptContext
 from app.api.deps import get_user_service, get_current_user, get_refresh_session_service
 from app.services.users import UserService
-from app.schemas.user import UserCreateAdm, UserResponsePublic
 from app.schemas.auth import Token, RegisterIn
 from app.core.security import hash_password, verify_password, create_access_token
 from app.core.config import settings
@@ -29,14 +28,8 @@ from sqlalchemy import update
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
-async def register(payload: RegisterIn, service: UserService = Depends(get_user_service)) -> UserResponsePublic:
-    existing = await service.get_by_email(payload.email)
-    if existing: raise HTTPException(status_code=409, detail="User already exists")
-
-    user = await service.create(UserCreateAdm(name=payload.name, email=payload.email, hashed_password=hash_password(payload.password)))
-   
-    return UserResponsePublic(name=user.name, email=user.email)
-
+async def register(payload: RegisterIn, service: RefreshSessionService = Depends(get_refresh_session_service)):
+    return await service.register(payload=payload)
 
 @router.post("/login", response_model=Token)
 async def login(form: Annotated[OAuth2PasswordRequestForm, Depends()], service: RefreshSessionService = Depends(get_refresh_session_service)):

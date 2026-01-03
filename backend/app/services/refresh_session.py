@@ -24,6 +24,8 @@ from app.schemas.auth import RefreshIn
 from jose import JWTError, jwt
 from sqlalchemy import select, update
 from app.schemas.auth import RefreshIn, LogoutIn
+from app.core.security import hash_password, verify_password, create_access_token
+from app.schemas.user import UserResponsePublic, UserCreateAdm
 
 class RefreshSessionService:
       def __init__(self, session):
@@ -114,3 +116,11 @@ class RefreshSessionService:
             .values(revoked_at=datetime.now(timezone.utc))
         )
         await self.session.commit()
+        
+      async def register(self, payload: RegisterIn):
+        existing = await self.user_repo.get_by_email(payload.email)
+        if existing: raise HTTPException(status_code=409, detail="User already exists")
+
+        user = await self.user_repo.create(UserCreateAdm(name=payload.name, email=payload.email, hashed_password=hash_password(payload.password)))
+      
+        return UserResponsePublic(name=user.name, email=user.email)        
