@@ -35,7 +35,7 @@ def get_analytics_service(
 ) -> AnalyticsService:
     return AnalyticsService(session=session)
 
-def get_refresh_session_service(
+def get_auth_service(
     session: AsyncSession=Depends(get_session)
 ) -> AuthService:
     return AuthService(session=session)
