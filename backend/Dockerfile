@@ -10,19 +10,19 @@ RUN pip install --upgrade pip
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 
 
-WORKDIR /app
+WORKDIR /backend
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY ./app /app/app
-COPY ./alembic.ini /app/alembic.ini
-COPY ./entrypoint.sh /app/entrypoint.sh
-COPY ./migrations /app/migrations
-COPY ./shared /app/shared
+COPY ./app /backend/app
+COPY ./alembic.ini /backend/alembic.ini
+COPY ./entrypoint.sh /backend/entrypoint.sh
+COPY ./migrations /backend/migrations
+COPY ./shared /backend/shared
 
-RUN chmod +x /app/entrypoint.sh
+RUN chmod +x /backend/entrypoint.sh
 
 EXPOSE 8000
 
-ENTRYPOINT ["/app/entrypoint.sh"]
+ENTRYPOINT ["/backend/entrypoint.sh"]
