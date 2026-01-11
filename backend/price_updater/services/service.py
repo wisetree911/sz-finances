@@ -1,9 +1,6 @@
-import json
 from loguru import logger
 import aiohttp
-import redis.asyncio as redis
 from price_updater.clients.moex_client import MoexClient
-from price_updater.config import REDIS_URL, REDIS_PRICES_CHANNEL
 from shared.repositories.asset_price import AssetPriceRepository
 from app.schemas.asset_price import AssetPriceCreate
 from app.core.database import async_session_maker
@@ -20,29 +17,13 @@ class PricesService():
         assets = asset_registry.get_all()
         if not assets: return
         prices = await MoexClient.get_all_prices()
-        r = redis.from_url(REDIS_URL, decode_responses=True)
-        try:
-            async with async_session_maker() as session:
-                async with session.begin():
-                    repo = self.repo(session=session)
-                    for asset_id, ticker in assets.items():
-                        price = prices.get(ticker)
-                        if price is None:
-                            continue
-                        await repo.create(AssetPriceCreate(asset_id=asset_id, price=price, currency="RUB", source="moex"))
-                        payload = {
-                            "asset_id": asset_id,
-                            "ticker": ticker,
-                            "price": float(price),
-                            "currency": "RUB",
-                            "source": "moex",
-                        }
-                        try:
-                            await r.publish(REDIS_PRICES_CHANNEL, json.dumps(payload))
-                        except Exception as exc:
-                            logger.error(f"Redis publish failed for {ticker}: {exc}")
-                        logger.info(f"💰 {ticker}: {price}")
-        finally:
-            await r.close()
+        async with async_session_maker() as session:
+            async with session.begin():
+                repo = self.repo(session=session)
+                for asset_id, ticker in assets.items():
+                    price = prices.get(ticker)
+                    if price is None: continue
+                    await repo.create(AssetPriceCreate(asset_id=asset_id, price=price, currency="RUB", source="moex"))
+                    logger.info(f"💰 {ticker}: {price}")
 
         logger.info("****** Обновление завершено ******")
