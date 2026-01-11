@@ -1,10 +1,97 @@
-from fastapi import FastAPI, APIRouter
-from app.api.routers.public import routers as public_routers
-from app.api.routers.adm import routers as admin_routers
+import asyncio
+from typing import Set
 
+import redis.asyncio as redis
+from fastapi import APIRouter, FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.routers.public import routers as public_routers
+from app.api.routers.adm import routers as admin_routers
+from app.core.config import settings
+
+
+class WSManager:
+    def __init__(self):
+        self._clients: Set[WebSocket] = set()
+
+    async def connect(self, ws: WebSocket):
+        await ws.accept()
+        self._clients.add(ws)
+
+    def disconnect(self, ws: WebSocket):
+        self._clients.discard(ws)
+
+    async def broadcast(self, message: str):
+        dead: list[WebSocket] = []
+        for ws in self._clients:
+            try:
+                await ws.send_text(message)
+            except Exception:
+                dead.append(ws)
+        for ws in dead:
+            self.disconnect(ws)
+
+ws_manager = WSManager()
 app = FastAPI()
+
+@app.websocket("/ws/prices")
+async def ws_prices(ws: WebSocket):
+    await ws_manager.connect(ws)
+    try:
+        while True:
+            await ws.receive_text()
+    except WebSocketDisconnect:
+        ws_manager.disconnect(ws)
+
+REDIS_URL=settings.REDIS_URL
+REDIS_PRICES_CHANNEL=settings.REDIS_PRICES_CHANNEL
+
+async def redis_prices_listener() -> None:
+    r = redis.from_url(REDIS_URL, decode_responses=True)
+    pubsub = r.pubsub()
+
+    await pubsub.subscribe(REDIS_PRICES_CHANNEL)
+
+    try:
+        async for msg in pubsub.listen():
+            if msg.get("type") != "message":
+                continue
+
+            data = msg.get("data")
+            if data is None:
+                continue
+
+            await ws_manager.broadcast(str(data))
+
+    except asyncio.CancelledError:
+        raise
+
+    finally:
+        try:
+            try:
+                await pubsub.unsubscribe(REDIS_PRICES_CHANNEL)
+            finally:
+                await pubsub.close()
+        finally:
+            await r.close()
+
+
+@app.on_event("startup")
+async def on_startup() -> None:
+    app.state.redis_prices_task = asyncio.create_task(redis_prices_listener())
+
+@app.on_event("shutdown")
+async def on_shutdown() -> None:
+    task = getattr(app.state, "redis_prices_task", None)
+    if task is not None:
+        task.cancel()
+        try:
+            await task
+        except asyncio.CancelledError:
+            pass
+
+
+
 api_router = APIRouter(prefix="/api")
 
 app.add_middleware(
@@ -25,5 +112,5 @@ for r in public_routers:
 
 # for r in admin_routers:
 #     api_router.include_router(r)
-    
+
 app.include_router(api_router)
