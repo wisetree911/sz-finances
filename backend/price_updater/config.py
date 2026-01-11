@@ -1,5 +1,6 @@
-import os
+from app.core.config import settings
 
 
-REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
-UPDATE_INTERVAL = 300
+REDIS_URL = settings.REDIS_URL
+REDIS_PRICES_CHANNEL = settings.REDIS_PRICES_CHANNEL
+UPDATE_INTERVAL = 30
