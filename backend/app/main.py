@@ -8,18 +8,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.routers.public import routers as public_routers
 from app.api.routers.adm import routers as admin_routers
 from app.core.config import settings
-from app.ws.manager import ws_manager
+from app.ws.routes import ws_router
 
 app = FastAPI()
 
-@app.websocket("/ws/prices")
-async def ws_prices(ws: WebSocket):
-    await ws_manager.connect(ws)
-    try:
-        while True:
-            await ws.receive_text()
-    except WebSocketDisconnect:
-        ws_manager.disconnect(ws)
 
 REDIS_URL=settings.REDIS_URL
 REDIS_PRICES_CHANNEL=settings.REDIS_PRICES_CHANNEL
@@ -85,8 +77,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+api_router.include_router(router=ws_router)
+
 for r in public_routers:
     api_router.include_router(r)
+    
 
 # for r in admin_routers:
 #     api_router.include_router(r)

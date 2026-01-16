@@ -22,3 +22,5 @@ class WSManager:
             self.disconnect(ws)
             
 ws_manager = WSManager()
+
+# websocat ws://localhost:8000/ws/prices
