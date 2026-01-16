@@ -2,21 +2,25 @@ from datetime import datetime
 from pydantic import BaseModel, Field, ConfigDict
 from pydantic.types import PositiveInt, NonNegativeInt
 from typing import Annotated
-
+from enum import Enum
 
 class APIModel(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
 
+class Currency(str, Enum):
+    RUB = "RUB"
+    USD = "USD"
+    
 Money = Annotated[
     float,
-    Field(description="money value", ge=0),
+    Field(description="Money value", ge=0),
 ]
 
 Percent = Annotated[
     float,
-    Field(description="percent value", ge=-100, le=10_000),
+    Field(description="Percent value", ge=-100, le=10_000),
 ]
 
 class TopPosition(APIModel):
@@ -39,7 +43,7 @@ class PortfolioSnapshotResponse(APIModel):
     unrealized_pnl: float = Field(..., description="Unrealized PNL of portfolio")
     unrealized_return_pct: Percent = Field(..., description="Unrelized return of portfolio")
     cost_basis: Money = Field(..., description="Value invested in portfolio initially")
-    currency: str = Field(..., description="Currency of portfolio, for example: RUB")
+    currency: Currency = Field(..., description="Currency of portfolio, for example: RUB")
     positions_count: NonNegativeInt = Field(..., description="Number of unique assets in portfolio")
     top_positions: list[TopPosition] = Field(default_factory=list, description="Top 3 positions in portfolio by value part in portfolio", max_length=3)
 
@@ -67,7 +71,7 @@ class SectorDistributionResponse(APIModel):
     portfolio_id: PositiveInt = Field(..., description="Portfolio ID")
     name: str = Field(..., description="Portfolio name")
     market_value: Money = Field(..., description="Total market value of portfolio")
-    currency: str = Field(..., description="Currency of portfolio, for example: RUB")
+    currency: Currency = Field(..., description="Currency of portfolio, for example: RUB")
     sectors: list[SectorDistributionPosition]  = Field(default_factory=list, description="Portfolio grouped and distributed by sectors")
 
     @classmethod
