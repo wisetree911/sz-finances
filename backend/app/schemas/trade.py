@@ -14,10 +14,10 @@ class TradeDirection(str, Enum):
     buy = "buy"
     sell = "sell"
     
-Money = Annotated(
+Money = Annotated[
     float, 
-    Field(description="Money value", ge=0)
-)
+    Field(description="Money value", ge=0),
+]
 
 class TradeBase(APIModel):
     portfolio_id: PositiveInt = Field(..., description="Portfolio id")
