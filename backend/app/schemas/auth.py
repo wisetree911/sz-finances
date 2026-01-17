@@ -1,23 +1,29 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from pydantic.types import AwareDatetime
 
-class Token(BaseModel):
+class APIModel(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+        str_strip_whitespace=True,
+    )
+    
+class Token(APIModel):
     access_token: str
     refresh_token: str
     token_type: str = "bearer"
 
-class RefreshIn(BaseModel):
+class RefreshIn(APIModel):
     refresh_token: str
     
-class RegisterIn(BaseModel):
+class RegisterIn(APIModel):
     name: str
     email: str
     password: str
     
-class LogoutIn(BaseModel):
+class LogoutIn(APIModel):
     refresh_token: str
     
-class RefreshSessionCreate(BaseModel):
+class RefreshSessionCreate(APIModel):
     user_id: int
     jti: str
     token_hash: str
