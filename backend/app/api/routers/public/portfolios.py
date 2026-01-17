@@ -25,9 +25,7 @@ async def get_by_portfolio_id(
     current_user=Depends(get_current_user),
     service: PortfolioService = Depends(get_portfolio_service),
 ) -> PortfolioResponseAdm:
-    return await service.get_portfolio_for_user(
-        portfolio_id=portfolio_id, user_id=current_user.id
-    )
+    return await service.get_portfolio_for_user(portfolio_id=portfolio_id, user_id=current_user.id)
 
 
 @router.delete("/{portfolio_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -36,9 +34,7 @@ async def delete_by_id(
     current_user=Depends(get_current_user),
     service: PortfolioService = Depends(get_portfolio_service),
 ):
-    await service.delete_portfolio_for_user(
-        portfolio_id=portfolio_id, user_id=current_user.id
-    )
+    await service.delete_portfolio_for_user(portfolio_id=portfolio_id, user_id=current_user.id)
     return None
 
 
@@ -48,9 +44,7 @@ async def create_portfolio_for_user(
     current_user=Depends(get_current_user),
     service: PortfolioService = Depends(get_portfolio_service),
 ) -> PortfolioResponseAdm:
-    return await service.create_portfolio_for_user(
-        payload=payload, user_id=current_user.id
-    )
+    return await service.create_portfolio_for_user(payload=payload, user_id=current_user.id)
 
 
 @router.patch("/{portfolio_id}", response_model=PortfolioResponseAdm)

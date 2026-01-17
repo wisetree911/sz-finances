@@ -89,18 +89,14 @@ def calc_unrealized_return_pct(unrealized_pnl: float, cost_basis: float):
 # SECTOR DISTRIBUTION
 
 
-def build_sector_positions(
-    trades: list[TradeDTO], current_prices, assets
-) -> list[SectorPosition]:
+def build_sector_positions(trades: list[TradeDTO], current_prices, assets) -> list[SectorPosition]:
     portfolio_positions = build_only_buy_positions(
         trades=trades, current_prices=current_prices, assets=assets
     )
     sector_to_pos = {}
     for pos in portfolio_positions:
         if pos.sector not in sector_to_pos:
-            sector_to_pos[pos.sector] = SectorPosition(
-                sector=pos.sector, market_value=0
-            )
+            sector_to_pos[pos.sector] = SectorPosition(sector=pos.sector, market_value=0)
 
         sector_to_pos[pos.sector].market_value = pos.market_price
 
@@ -112,9 +108,7 @@ def build_dynamics_positions(trades: list[TradeDTO]):
 
     for trade in trades:
         if trade.asset_id not in id_to_pos:
-            id_to_pos[trade.asset_id] = DynamicsPosition(
-                asset_id=trade.asset_id, quantity=0
-            )
+            id_to_pos[trade.asset_id] = DynamicsPosition(asset_id=trade.asset_id, quantity=0)
         if trade.direction == "buy":
             id_to_pos[trade.asset_id].quantity += trade.quantity
         elif trade.direction == "sell":
@@ -132,9 +126,7 @@ def get_timestamps_count_24h(ts_now: datetime, interval_mins: int) -> int:
 def get_sorted_timeseries_24h(ts_now: datetime, count: int, interval_mins: int):
     time_series = []
     for i in range(count):
-        ts = (ts_now - timedelta(minutes=interval_mins * i)).replace(
-            second=0, microsecond=0
-        )
+        ts = (ts_now - timedelta(minutes=interval_mins * i)).replace(second=0, microsecond=0)
         time_series.append(ts)
     time_series = sorted(time_series, reverse=False)
     return time_series
@@ -152,8 +144,6 @@ def build_time_series(timestamp_now, asset_prices, dynamic_positions):
         for asset_price in asset_prices:
             timestamp = asset_price.timestamp.replace(second=0, microsecond=0)
             if timestamp == ts:
-                total_price += (
-                    asset_price.price * asset_id_to_quantity[asset_price.asset_id]
-                )
+                total_price += asset_price.price * asset_id_to_quantity[asset_price.asset_id]
         data.append(TimeSerie(timestamp=ts, price=total_price))
     return data

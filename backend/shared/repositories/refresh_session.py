@@ -17,9 +17,7 @@ class RefreshSessionRepository:
         return obj
 
     async def get_by_jti(self, jti: str):
-        result = await self.session.execute(
-            select(RefreshSession).where(RefreshSession.jti == jti)
-        )
+        result = await self.session.execute(select(RefreshSession).where(RefreshSession.jti == jti))
         return result.scalar_one_or_none()
 
     async def set_revoke_by_jti(self, jti: str):

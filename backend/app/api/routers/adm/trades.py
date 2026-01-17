@@ -29,9 +29,7 @@ async def create_trade(
 
 
 @router.delete("/{trade_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_trade(
-    trade_id: int, service: TradeService = Depends(get_trade_service)
-):
+async def delete_trade(trade_id: int, service: TradeService = Depends(get_trade_service)):
     await service.delete_trade(trade_id=trade_id)
     return
 

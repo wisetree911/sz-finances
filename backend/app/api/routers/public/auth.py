@@ -9,9 +9,7 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
-async def register(
-    payload: RegisterIn, service: AuthService = Depends(get_auth_service)
-):
+async def register(payload: RegisterIn, service: AuthService = Depends(get_auth_service)):
     return await service.register(payload=payload)
 
 

@@ -46,9 +46,7 @@ class PortfolioService:
             raise HTTPException(status_code=404, detail="Portfolio not found")
         return portfolio
 
-    async def create_portfolio_for_user(
-        self, user_id: int, payload: PortfolioCreatePublic
-    ):
+    async def create_portfolio_for_user(self, user_id: int, payload: PortfolioCreatePublic):
         return await self.repo.create_for_user(payload=payload, user_id=user_id)
 
     async def delete_portfolio_for_user(self, portfolio_id: int, user_id: int):

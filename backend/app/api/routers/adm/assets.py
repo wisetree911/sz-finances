@@ -36,9 +36,7 @@ async def create_asset(
 
 
 @router.delete("/{asset_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_asset(
-    asset_id: int, service: AssetService = Depends(get_asset_service)
-):
+async def delete_asset(asset_id: int, service: AssetService = Depends(get_asset_service)):
     await service.delete(asset_id=asset_id)
     return
 

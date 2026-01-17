@@ -44,9 +44,7 @@ class TradeService:
         return trades
 
     async def get_trade_by_id_for_user(self, trade_id: int, user_id: int):
-        trade = await self.repo.get_trade_by_id_for_user(
-            trade_id=trade_id, user_id=user_id
-        )
+        trade = await self.repo.get_trade_by_id_for_user(trade_id=trade_id, user_id=user_id)
         if not trade:
             raise HTTPException(404, "SZ trade not found")
         return trade

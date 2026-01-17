@@ -14,6 +14,4 @@ class AssetPrice(Base):
     price: Mapped[float] = mapped_column(Numeric(12, 4), nullable=False)
     currency: Mapped[str] = mapped_column(Text, default="RUB", nullable=False)
     source: Mapped[str] = mapped_column(Text, default="moex", nullable=False)
-    timestamp: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
+    timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

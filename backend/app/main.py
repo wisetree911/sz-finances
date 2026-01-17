@@ -13,9 +13,7 @@ app = FastAPI()
 @app.on_event("startup")
 async def on_startup() -> None:
     app.state.redis = create_redis()
-    app.state.redis_prices_task = asyncio.create_task(
-        redis_prices_listener(app.state.redis)
-    )
+    app.state.redis_prices_task = asyncio.create_task(redis_prices_listener(app.state.redis))
 
 
 @app.on_event("shutdown")

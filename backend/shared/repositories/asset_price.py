@@ -24,9 +24,7 @@ class AssetPriceRepository:
         result = await self.session.execute(query)
         return result.scalar_one_or_none()
 
-    async def get_prices_since(
-        self, ids: list[int], since: datetime
-    ) -> list[AssetPrice]:
+    async def get_prices_since(self, ids: list[int], since: datetime) -> list[AssetPrice]:
         if not ids:
             return []
         query = select(AssetPrice).where(

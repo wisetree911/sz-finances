@@ -29,24 +29,14 @@ class TopPosition(APIModel):
     ticker: str = Field(..., description="Asset ticker, for example: GAZP")
     full_name: str = Field(..., description="Full name of asset in position")
     quantity: NonNegativeInt = Field(..., description="Quantity of asset in position")
-    avg_buy_price: Money = Field(
-        ..., description="Average buy price of asset in position"
-    )
+    avg_buy_price: Money = Field(..., description="Average buy price of asset in position")
     asset_market_price: Money = Field(
         ..., description="Current market price of 1 asset in position"
     )
-    market_value: Money = Field(
-        ..., description="Current market price of all assets in position"
-    )
-    unrealized_pnl: float = Field(
-        ..., description="Unrealized PNL of portfolio position"
-    )
-    unrealized_return_pct: Percent = Field(
-        ..., description="Profit of asset in percents"
-    )
-    weight_pct: Percent = Field(
-        ..., description="Weight of asset in portfolio in percents"
-    )
+    market_value: Money = Field(..., description="Current market price of all assets in position")
+    unrealized_pnl: float = Field(..., description="Unrealized PNL of portfolio position")
+    unrealized_return_pct: Percent = Field(..., description="Profit of asset in percents")
+    weight_pct: Percent = Field(..., description="Weight of asset in portfolio in percents")
 
 
 class PortfolioSnapshotResponse(APIModel):
@@ -54,16 +44,10 @@ class PortfolioSnapshotResponse(APIModel):
     name: str = Field(..., description="Portfolio name")
     market_value: Money = Field(..., description="Total current value of portfolio")
     unrealized_pnl: float = Field(..., description="Unrealized PNL of portfolio")
-    unrealized_return_pct: Percent = Field(
-        ..., description="Unrelized return of portfolio"
-    )
+    unrealized_return_pct: Percent = Field(..., description="Unrelized return of portfolio")
     cost_basis: Money = Field(..., description="Value invested in portfolio initially")
-    currency: Currency = Field(
-        ..., description="Currency of portfolio, for example: RUB"
-    )
-    positions_count: NonNegativeInt = Field(
-        ..., description="Number of unique assets in portfolio"
-    )
+    currency: Currency = Field(..., description="Currency of portfolio, for example: RUB")
+    positions_count: NonNegativeInt = Field(..., description="Number of unique assets in portfolio")
     top_positions: list[TopPosition] = Field(
         default_factory=list,
         description="Top 3 positions in portfolio by value part in portfolio",
@@ -100,9 +84,7 @@ class SectorDistributionResponse(APIModel):
     portfolio_id: PositiveInt = Field(..., description="Portfolio ID")
     name: str = Field(..., description="Portfolio name")
     market_value: Money = Field(..., description="Total market value of portfolio")
-    currency: Currency = Field(
-        ..., description="Currency of portfolio, for example: RUB"
-    )
+    currency: Currency = Field(..., description="Currency of portfolio, for example: RUB")
     sectors: list[SectorDistributionPosition] = Field(
         default_factory=list, description="Portfolio grouped and distributed by sectors"
     )
@@ -120,9 +102,7 @@ class SectorDistributionResponse(APIModel):
 
 class PortfolioPrice(APIModel):
     timestamp: AwareDatetime = Field(..., description="Timestamp in iso8601")
-    total_value: Money = Field(
-        ..., description="Total value of portfolio at selected timestamp"
-    )
+    total_value: Money = Field(..., description="Total value of portfolio at selected timestamp")
 
 
 class PortfolioDynamicsResponse(APIModel):

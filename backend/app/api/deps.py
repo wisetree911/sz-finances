@@ -48,9 +48,7 @@ async def get_current_user(
     service: UserService = Depends(get_user_service),
 ):
     try:
-        payload = jwt.decode(
-            token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
-        )
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
 
         if payload.get("type") != "access":  # чтобы точно на рефреше не получили ничего
             raise HTTPException(
