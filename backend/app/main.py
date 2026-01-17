@@ -1,10 +1,8 @@
 import asyncio
-from fastapi import APIRouter, FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routers.public import routers as public_routers
-from app.api.routers.adm import routers as admin_routers
-from app.ws.manager import ws_manager
 from app.ws.routes import ws_router
 from app.core.redis import create_redis, close_redis
 from app.ws.redis_listener import redis_prices_listener

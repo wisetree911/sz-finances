@@ -1,5 +1,5 @@
-from fastapi import APIRouter, status, Depends
-from app.schemas.trade import TradeCreate, TradeResponse, TradeUpdate
+from fastapi import APIRouter, Depends
+from app.schemas.trade import TradeResponse
 from app.services.trades import TradeService
 from app.api.deps import get_trade_service, get_current_user
 

@@ -8,7 +8,7 @@ class MoexClient:
         async with aiohttp.ClientSession(
             connector=aiohttp.connector.TCPConnector(ssl=False)
         ) as session:
-            url = f"https://iss.moex.com/iss/engines/stock/markets/shares/securities.json?marketdata.columns=SECID,LAST"
+            url = "https://iss.moex.com/iss/engines/stock/markets/shares/securities.json?marketdata.columns=SECID,LAST"
             try:
                 async with session.get(url, timeout=30) as resp:
                     data = await resp.json()

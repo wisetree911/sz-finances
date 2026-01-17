@@ -20,8 +20,8 @@ from app.core.security import hash_of_refresh_token
 
 from fastapi import status
 from app.schemas.auth import RefreshIn
-from jose import JWTError, jwt
-from app.schemas.auth import RefreshIn, LogoutIn
+from jose import JWTError
+from app.schemas.auth import LogoutIn
 from app.schemas.user import UserResponsePublic, UserCreateAdm
 
 

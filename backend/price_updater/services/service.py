@@ -1,5 +1,4 @@
 from loguru import logger
-import aiohttp
 from price_updater.clients.moex_client import MoexClient
 from shared.repositories.asset_price import AssetPriceRepository
 from app.schemas.asset_price import AssetPriceCreate

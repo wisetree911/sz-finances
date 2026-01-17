@@ -1,11 +1,10 @@
-from sqlalchemy import select, func
+from sqlalchemy import select
 from shared.models.portfolio import Portfolio
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.schemas.portfolio import (
     PortfolioCreateAdm,
     PortfolioUpdateAdm,
     PortfolioCreatePublic,
-    PortfolioUpdatePublic,
 )
 
 

@@ -1,4 +1,4 @@
-from fastapi import Depends, status
+from fastapi import Depends
 from fastapi import APIRouter
 from app.services.assets import AssetService
 from app.schemas.asset import AssetResponsePublic

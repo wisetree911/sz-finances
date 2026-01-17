@@ -8,12 +8,6 @@ import asyncio
 from app.core.database import Base
 from app.core.config import settings
 
-from shared.models.user import User
-from shared.models.asset import Asset
-from shared.models.asset_price import AssetPrice
-from shared.models.portfolio import Portfolio
-from shared.models.trade import Trade
-from shared.models.refresh_sessions import RefreshSession
 
 
 config = context.config

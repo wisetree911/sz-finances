@@ -1,4 +1,3 @@
-from sqlalchemy import select
 from loguru import logger
 from shared.repositories.asset import AssetRepository
 

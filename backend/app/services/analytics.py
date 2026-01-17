@@ -24,7 +24,6 @@ from app.analytics.analytics_calc import (
     build_dynamics_positions,
     build_time_series,
 )
-from datetime import datetime, timedelta
 
 
 # убрать всю аналитику отсюлаёёда

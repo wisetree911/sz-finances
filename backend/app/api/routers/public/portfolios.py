@@ -2,7 +2,6 @@ from fastapi import APIRouter, status, Depends
 from app.schemas.portfolio import (
     PortfolioCreatePublic,
     PortfolioResponseAdm,
-    PortfolioUpdateAdm,
     PortfolioUpdatePublic,
 )
 from app.services.portfolios import PortfolioService

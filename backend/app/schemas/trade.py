@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, ConfigDict, model_validator
-from pydantic.types import AwareDatetime, PositiveInt, NonNegativeInt, NonNegativeFloat
+from pydantic.types import AwareDatetime, PositiveInt
 from enum import Enum
 from typing import Annotated
 

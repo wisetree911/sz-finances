@@ -1,5 +1,4 @@
 from shared.repositories.portfolio import PortfolioRepository
-from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException
 from app.schemas.portfolio import PortfolioCreatePublic, PortfolioUpdatePublic
 
