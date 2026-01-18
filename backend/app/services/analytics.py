@@ -40,7 +40,7 @@ class AnalyticsService:
     async def portfolio_snapshot(self, portfolio_id: int) -> PortfolioSnapshotResponse:
         portfolio = await self.portfolio_repo.get_by_id(portfolio_id)
         if portfolio is None:
-            raise HTTPException(404, "SZ portfolio not found")
+            raise HTTPException(404, 'SZ portfolio not found')
         portfolio_trades = await self.trade_repo.get_trades_by_portfolio_id(portfolio_id)
         if not portfolio_trades:
             return PortfolioSnapshotResponse.empty(portfolio)
@@ -95,9 +95,9 @@ class AnalyticsService:
     ) -> PortfolioSnapshotResponse:
         portfolio = await self.portfolio_repo.get_by_id(portfolio_id)
         if portfolio is None:
-            raise HTTPException(404, "SZ portfolio not found")
+            raise HTTPException(404, 'SZ portfolio not found')
         if portfolio.user_id != user_id:
-            raise HTTPException(404, "SZ portfolio not found")
+            raise HTTPException(404, 'SZ portfolio not found')
         portfolio_trades = await self.trade_repo.get_trades_by_portfolio_id(portfolio_id)
         if not portfolio_trades:
             return PortfolioSnapshotResponse.empty(portfolio)
@@ -150,7 +150,7 @@ class AnalyticsService:
     async def sector_distribution(self, portfolio_id: int) -> SectorDistributionResponse:
         portfolio = await self.portfolio_repo.get_by_id(portfolio_id)
         if portfolio is None:
-            raise HTTPException(404, "SZ portfolio not found")
+            raise HTTPException(404, 'SZ portfolio not found')
         portfolio_trades = await self.trade_repo.get_trades_by_portfolio_id(portfolio_id)
         if not portfolio_trades:
             return SectorDistributionResponse.empty(portfolio)
@@ -185,9 +185,9 @@ class AnalyticsService:
     ) -> SectorDistributionResponse:
         portfolio = await self.portfolio_repo.get_by_id(portfolio_id)
         if portfolio is None:
-            raise HTTPException(404, "SZ portfolio not found")
+            raise HTTPException(404, 'SZ portfolio not found')
         if portfolio.user_id != user_id:
-            raise HTTPException(404, "SZ portfolio not found")
+            raise HTTPException(404, 'SZ portfolio not found')
         portfolio_trades = await self.trade_repo.get_trades_by_portfolio_id(portfolio_id)
         if not portfolio_trades:
             return SectorDistributionResponse.empty(portfolio)
@@ -245,9 +245,9 @@ class AnalyticsService:
     ) -> PortfolioDynamicsResponse:
         portfolio = await self.portfolio_repo.get_by_id(portfolio_id)
         if portfolio is None:
-            raise HTTPException(404, "SZ portfolio not found")
+            raise HTTPException(404, 'SZ portfolio not found')
         if portfolio.user_id != user_id:
-            raise HTTPException(404, "SZ portfolio not found")
+            raise HTTPException(404, 'SZ portfolio not found')
         portfolio_trades = await self.trade_repo.get_trades_by_portfolio_id(portfolio_id)
         dynamic_positions = build_dynamics_positions(trades=portfolio_trades)
         asset_ids = [pos.asset_id for pos in dynamic_positions]

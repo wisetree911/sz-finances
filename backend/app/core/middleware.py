@@ -6,11 +6,11 @@ from app.core.logging import new_request_id
 from fastapi import Request, Response
 from structlog.contextvars import bind_contextvars, clear_contextvars
 
-log = structlog.get_logger("http")
+log = structlog.get_logger('http')
 
 
 async def request_logging_middleware(request: Request, call_next: Callable) -> Response:
-    rid = request.headers.get("x-request-id") or new_request_id()
+    rid = request.headers.get('x-request-id') or new_request_id()
 
     clear_contextvars()
     bind_contextvars(request_id=rid)
@@ -21,19 +21,19 @@ async def request_logging_middleware(request: Request, call_next: Callable) -> R
         elapsed_ms = (time.perf_counter() - started) * 1000
 
         log.info(
-            "request",
+            'request',
             method=request.method,
             path=request.url.path,
             status_code=response.status_code,
             duration_ms=round(elapsed_ms, 2),
         )
-        response.headers["x-request-id"] = rid
+        response.headers['x-request-id'] = rid
         return response
 
     except Exception:
         elapsed_ms = (time.perf_counter() - started) * 1000
         log.exception(
-            "unhandled_exception",
+            'unhandled_exception',
             method=request.method,
             path=request.url.path,
             duration_ms=round(elapsed_ms, 2),

@@ -12,7 +12,7 @@ class PricesService:
         self.repo = AssetPriceRepository
 
     async def update_prices(self, asset_registry):
-        logger.info("****** Обновление цен *******")
+        logger.info('****** Обновление цен *******')
         assets = asset_registry.get_all()
         if not assets:
             return
@@ -28,10 +28,10 @@ class PricesService:
                         AssetPriceCreate(
                             asset_id=asset_id,
                             price=price,
-                            currency="RUB",
-                            source="moex",
+                            currency='RUB',
+                            source='moex',
                         )
                     )
-                    logger.info(f"💰 {ticker}: {price}")
+                    logger.info(f'💰 {ticker}: {price}')
 
-        logger.info("****** Обновление завершено ******")
+        logger.info('****** Обновление завершено ******')

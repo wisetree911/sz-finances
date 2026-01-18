@@ -25,12 +25,12 @@ async def job():
 
 
 async def main():
-    logger.info("Price Updater старт")
+    logger.info('Price Updater старт')
 
     await reload_assets()
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(job, "interval", seconds=UPDATE_INTERVAL)
-    scheduler.add_job(reload_assets, "interval", minutes=10)
+    scheduler.add_job(job, 'interval', seconds=UPDATE_INTERVAL)
+    scheduler.add_job(reload_assets, 'interval', minutes=10)
     scheduler.start()
     await job()
 
@@ -38,5 +38,5 @@ async def main():
         await asyncio.sleep(3600)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     asyncio.run(main())

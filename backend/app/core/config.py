@@ -12,8 +12,8 @@ class Settings(BaseSettings):
     REDIS_PRICES_CHANNEL: str
 
     class Config:
-        env_file = ".env"
-        extra = "ignore"
+        env_file = '.env'
+        extra = 'ignore'
 
 
 settings = Settings()

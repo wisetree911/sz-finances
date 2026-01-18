@@ -10,22 +10,22 @@ from app.core.redis import close_redis, create_redis
 from app.ws.redis_listener import redis_prices_listener
 from app.ws.routes import ws_router
 
-configure_logging_dev(log_level="INFO")
+configure_logging_dev(log_level='INFO')
 
 app = FastAPI()
 
-app.middleware("http")(request_logging_middleware)
+app.middleware('http')(request_logging_middleware)
 
 
-@app.on_event("startup")
+@app.on_event('startup')
 async def on_startup() -> None:
     app.state.redis = create_redis()
     app.state.redis_prices_task = asyncio.create_task(redis_prices_listener(app.state.redis))
 
 
-@app.on_event("shutdown")
+@app.on_event('shutdown')
 async def on_shutdown() -> None:
-    task = getattr(app.state, "redis_prices_task", None)
+    task = getattr(app.state, 'redis_prices_task', None)
     if task is not None:
         task.cancel()
         try:
@@ -33,24 +33,24 @@ async def on_shutdown() -> None:
         except asyncio.CancelledError:
             pass
 
-    r = getattr(app.state, "redis", None)
+    r = getattr(app.state, 'redis', None)
     if r is not None:
         await close_redis(r)
 
 
-api_router = APIRouter(prefix="/api")
+api_router = APIRouter(prefix='/api')
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
+        'http://localhost:3000',
+        'http://127.0.0.1:3000',
+        'http://localhost:5173',
+        'http://127.0.0.1:5173',
     ],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=['*'],
+    allow_headers=['*'],
 )
 
 api_router.include_router(router=ws_router)

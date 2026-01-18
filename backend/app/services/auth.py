@@ -35,7 +35,7 @@ class AuthService:
         if not user or not verify_password(password, user.hashed_password):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Incorrect username or password",
+                detail='Incorrect username or password',
             )
 
         access_token = create_access_token(user_id=user.id)
@@ -106,7 +106,7 @@ class AuthService:
     async def register(self, payload: RegisterIn):
         existing = await self.user_repo.get_by_email(payload.email)
         if existing:
-            raise HTTPException(status_code=409, detail="User already exists")
+            raise HTTPException(status_code=409, detail='User already exists')
         user = await self.user_repo.create(
             UserCreateAdm(
                 name=payload.name,

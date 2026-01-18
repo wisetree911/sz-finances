@@ -7,11 +7,11 @@ from app.schemas.analytics import (
 from app.services.analytics import AnalyticsService
 from fastapi import APIRouter, Depends
 
-router = APIRouter(prefix="/analytics", tags=["Analytics"])
+router = APIRouter(prefix='/analytics', tags=['Analytics'])
 
 
 @router.get(
-    "/{portfolio_id}/snapshot", response_model=PortfolioSnapshotResponse
+    '/{portfolio_id}/snapshot', response_model=PortfolioSnapshotResponse
 )  # допилить чтобы аналитика давала (или в ручке) список снэпшотов по всем портфолио
 async def get_portfolio_shapshot_for_user(
     portfolio_id: int,
@@ -23,7 +23,7 @@ async def get_portfolio_shapshot_for_user(
     )
 
 
-@router.get("/{portfolio_id}/sectors", response_model=SectorDistributionResponse)
+@router.get('/{portfolio_id}/sectors', response_model=SectorDistributionResponse)
 async def get_portfolio_sectors_distribution_for_user(
     portfolio_id: int,
     current_user=Depends(get_current_user),
@@ -34,7 +34,7 @@ async def get_portfolio_sectors_distribution_for_user(
     )
 
 
-@router.get("/{portfolio_id}/dynamics/24h", response_model=PortfolioDynamicsResponse)
+@router.get('/{portfolio_id}/dynamics/24h', response_model=PortfolioDynamicsResponse)
 async def get_portfolio_dynamics_for_user(
     portfolio_id: int,
     current_user=Depends(get_current_user),

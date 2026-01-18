@@ -7,31 +7,31 @@ from pydantic.types import AwareDatetime, PositiveInt
 
 class APIModel(BaseModel):
     model_config = ConfigDict(
-        extra="forbid",
+        extra='forbid',
         from_attributes=True,
         str_strip_whitespace=True,
     )
 
 
 class Currency(str, Enum):
-    RUB = "RUB"
-    USD = "USD"
+    RUB = 'RUB'
+    USD = 'USD'
 
 
 PortfolioName = Annotated[
     str,
     Field(
-        description="Portfolio name",
+        description='Portfolio name',
         min_length=1,
         max_length=64,
-        examples=["Main portfolio"],
+        examples=['Main portfolio'],
     ),
 ]
 
 
 class PortfolioFields(APIModel):
     name: PortfolioName
-    currency: Currency = Field(..., description="Portfolio currency")
+    currency: Currency = Field(..., description='Portfolio currency')
 
 
 class PortfolioCreatePublic(PortfolioFields):
@@ -42,10 +42,10 @@ class PortfolioUpdatePublic(APIModel):
     name: PortfolioName | None = None
     currency: Currency | None = None
 
-    @model_validator(mode="after")
+    @model_validator(mode='after')
     def at_least_one_field(self):
         if not self.model_dump(exclude_none=True):
-            raise ValueError("At least one field must be provided")
+            raise ValueError('At least one field must be provided')
         return self
 
 
@@ -58,10 +58,10 @@ class PortfolioUpdateAdm(APIModel):
     name: PortfolioName | None = None
     currency: Currency | None = None
 
-    @model_validator(mode="after")
+    @model_validator(mode='after')
     def at_least_one_field(self):
         if not self.model_dump(exclude_none=True):
-            raise ValueError("At least one field must be provided")
+            raise ValueError('At least one field must be provided')
         return self
 
 

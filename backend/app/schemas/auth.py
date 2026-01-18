@@ -4,7 +4,7 @@ from pydantic.types import AwareDatetime
 
 class APIModel(BaseModel):
     model_config = ConfigDict(
-        extra="forbid",
+        extra='forbid',
         str_strip_whitespace=True,
     )
 
@@ -12,7 +12,7 @@ class APIModel(BaseModel):
 class Token(APIModel):
     access_token: str
     refresh_token: str
-    token_type: str = "bearer"
+    token_type: str = 'bearer'
 
 
 class RefreshIn(APIModel):

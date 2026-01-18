@@ -7,24 +7,24 @@ from app.schemas.portfolio import (
 from app.services.portfolios import PortfolioService
 from fastapi import APIRouter, Depends, status
 
-router = APIRouter(prefix="/portfolios", tags=["Portfolios"])
+router = APIRouter(prefix='/portfolios', tags=['Portfolios'])
 
 
-@router.get("/{portfolio_id}")
+@router.get('/{portfolio_id}')
 async def get_by_id(
     portfolio_id: int, service: PortfolioService = Depends(get_portfolio_service)
 ) -> PortfolioResponseAdm:
     return await service.get_portfolio_by_portfolio_id(portfolio_id=portfolio_id)
 
 
-@router.get("/")
+@router.get('/')
 async def get_all(
     service: PortfolioService = Depends(get_portfolio_service),
 ) -> list[PortfolioResponseAdm]:
     return await service.get_all_portfolios()
 
 
-@router.post("/")
+@router.post('/')
 async def create(
     payload: PortfolioCreateAdm,
     service: PortfolioService = Depends(get_portfolio_service),
@@ -32,7 +32,7 @@ async def create(
     return await service.create_portfolio(payload)
 
 
-@router.delete("/{portfolio_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete('/{portfolio_id}', status_code=status.HTTP_204_NO_CONTENT)
 async def delete_by_id(
     portfolio_id: int, service: PortfolioService = Depends(get_portfolio_service)
 ):
@@ -40,7 +40,7 @@ async def delete_by_id(
     return
 
 
-@router.patch("/{portfolio_id}")
+@router.patch('/{portfolio_id}')
 async def update_portfolio(
     portfolio_id: int,
     payload: PortfolioUpdateAdm,
@@ -49,7 +49,7 @@ async def update_portfolio(
     return await service.update(portfolio_id=portfolio_id, payload=payload)
 
 
-@router.get("/user/{user_id}")  # add pydantic
+@router.get('/user/{user_id}')  # add pydantic
 async def get_user_portfolios(
     user_id: int, service: PortfolioService = Depends(get_portfolio_service)
 ):

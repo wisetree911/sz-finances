@@ -5,7 +5,7 @@ from app.core.config import settings
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
-pwd_context = CryptContext(schemes=["bcrypt_sha256"], deprecated="auto")
+pwd_context = CryptContext(schemes=['bcrypt_sha256'], deprecated='auto')
 
 
 def hash_password(password: str) -> str:
@@ -19,10 +19,10 @@ def verify_password(password: str, hashed: str) -> bool:
 def create_access_token(user_id: int) -> str:
     expirates_at = datetime.now(UTC) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     payload = {
-        "sub": str(user_id),
-        "type": "access",
-        "exp": expirates_at,
-        "iat": datetime.now(UTC),
+        'sub': str(user_id),
+        'type': 'access',
+        'exp': expirates_at,
+        'iat': datetime.now(UTC),
     }
     return jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
@@ -30,11 +30,11 @@ def create_access_token(user_id: int) -> str:
 def create_refresh_token(user_id: int, jti: str) -> str:
     expires_at = datetime.now(UTC) + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
     payload = {
-        "sub": str(user_id),
-        "jti": jti,
-        "type": "refresh",
-        "exp": expires_at,
-        "iat": datetime.now(UTC),
+        'sub': str(user_id),
+        'jti': jti,
+        'type': 'refresh',
+        'exp': expires_at,
+        'iat': datetime.now(UTC),
     }
     return jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
@@ -45,7 +45,7 @@ def hash_of_refresh_token(token: str) -> str:
 
 def get_jti_from_token(token: str):
     decoded = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-    return decoded.get("jti")
+    return decoded.get('jti')
 
 
 class InvalidRefreshToken(Exception):
@@ -62,11 +62,11 @@ def decode_refresh_token(token: str) -> tuple[int, str]:
     except JWTError as err:
         raise InvalidRefreshToken() from err
 
-    if decoded.get("type") != "refresh":
+    if decoded.get('type') != 'refresh':
         raise InvalidRefreshToken()
 
-    user_id = decoded.get("sub")
-    jti = decoded.get("jti")
+    user_id = decoded.get('sub')
+    jti = decoded.get('jti')
 
     if not user_id or not jti:
         raise InvalidRefreshToken()

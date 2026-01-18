@@ -6,11 +6,11 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 
 class RefreshSession(Base):
-    __tablename__ = "refresh_sessions"
+    __tablename__ = 'refresh_sessions'
 
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE"), index=True, nullable=False
+        ForeignKey('users.id', ondelete='CASCADE'), index=True, nullable=False
     )
     token_hash: Mapped[str] = mapped_column(Text, nullable=False)
     jti: Mapped[str] = mapped_column(Text, nullable=False, unique=True, index=True)

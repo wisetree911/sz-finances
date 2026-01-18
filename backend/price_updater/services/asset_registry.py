@@ -7,7 +7,7 @@ class AssetRegistry:
         self.assets: dict[int, str] = {}
 
     async def load(self, session):
-        logger.info("**** загрузка список активов из БД ****")
+        logger.info('**** загрузка список активов из БД ****')
         repo = AssetRepository(session=session)
         rows = await repo.get_all()
         self.assets = {row.id: row.ticker for row in rows}

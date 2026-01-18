@@ -18,17 +18,17 @@ def build_only_buy_positions(
     for t in trades:
         if t.asset_id not in id_to_lot:
             id_to_lot[t.asset_id] = deque()
-        if t.direction == "buy":
-            id_to_lot[t.asset_id].append({"qty": t.quantity, "price": t.price})
-        elif t.direction == "sell":
+        if t.direction == 'buy':
+            id_to_lot[t.asset_id].append({'qty': t.quantity, 'price': t.price})
+        elif t.direction == 'sell':
             left_to_sell = t.quantity
 
             while left_to_sell != 0:
-                left_in_lot = id_to_lot[t.asset_id][0]["qty"]
+                left_in_lot = id_to_lot[t.asset_id][0]['qty']
                 if left_in_lot > left_to_sell:
                     left_in_lot -= left_to_sell
                     left_to_sell = 0
-                    id_to_lot[t.asset_id][0]["qty"] = left_in_lot
+                    id_to_lot[t.asset_id][0]['qty'] = left_in_lot
                 elif left_in_lot < left_to_sell:
                     left_to_sell -= left_in_lot
                     id_to_lot[t.asset_id].popleft()
@@ -43,7 +43,7 @@ def build_only_buy_positions(
     for asset_id, lots in id_to_lot.items():
         asset_lots = deque()
         for lot in lots:
-            asset_lots.append(Lot(qty=lot["qty"], price=lot["price"]))
+            asset_lots.append(Lot(qty=lot['qty'], price=lot['price']))
         positive_assets.append(
             PortfolioPositionPrepared(
                 asset_id=asset_id,
@@ -110,9 +110,9 @@ def build_dynamics_positions(trades: list[TradeDTO]):
     for trade in trades:
         if trade.asset_id not in id_to_pos:
             id_to_pos[trade.asset_id] = DynamicsPosition(asset_id=trade.asset_id, quantity=0)
-        if trade.direction == "buy":
+        if trade.direction == 'buy':
             id_to_pos[trade.asset_id].quantity += trade.quantity
-        elif trade.direction == "sell":
+        elif trade.direction == 'sell':
             id_to_pos[trade.asset_id].quantity -= trade.quantity
 
     return [p for i, p in id_to_pos.items() if p.quantity]

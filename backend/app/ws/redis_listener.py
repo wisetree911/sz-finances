@@ -12,10 +12,10 @@ async def redis_prices_listener(r: redis.Redis) -> None:
 
     try:
         async for msg in pubsub.listen():
-            if msg.get("type") != "message":
+            if msg.get('type') != 'message':
                 continue
 
-            data = msg.get("data")
+            data = msg.get('data')
             if data is None:
                 continue
 

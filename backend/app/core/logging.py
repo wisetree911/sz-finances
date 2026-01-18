@@ -9,10 +9,10 @@ def new_request_id() -> str:
     return uuid.uuid4().hex
 
 
-def configure_logging_dev(log_level: str = "INFO") -> None:
+def configure_logging_dev(log_level: str = 'INFO') -> None:
     logging.basicConfig(
         level=getattr(logging, log_level.upper(), logging.INFO),
-        format="%(message)s",
+        format='%(message)s',
         handlers=[logging.StreamHandler(sys.stdout)],
     )
 
@@ -20,7 +20,7 @@ def configure_logging_dev(log_level: str = "INFO") -> None:
         processors=[
             structlog.contextvars.merge_contextvars,
             structlog.processors.add_log_level,
-            structlog.processors.TimeStamper(fmt="iso", utc=True),
+            structlog.processors.TimeStamper(fmt='iso', utc=True),
             structlog.processors.format_exc_info,
             structlog.dev.ConsoleRenderer(),
         ],
