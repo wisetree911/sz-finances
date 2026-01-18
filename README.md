@@ -7,6 +7,8 @@
 - собирает и отдает данные для графиков фронтенда.
 
 #  QUICKSTART
+cd backend 
+
 docker compose --env-file .env.example up -d --build
 
 При старте backend автоматически выполнит alembic миграции, сваггер будет доступен по http://localhost:8000/docs
