@@ -46,7 +46,8 @@ docker compose --env-file .env.example up -d --build
 •	SQLAlchemy 2.0 (async)
 •	Alembic
 •	Redis
-•	Logging + settings management интеграция с API iss.moex
+•	Logging
+•   API iss.moex
 •   Auth JWT (Access/Refresh)
 
 # В планах: 
