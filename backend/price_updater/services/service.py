@@ -12,26 +12,14 @@ class PricesService:
         self.repo = AssetPriceRepository
 
     async def update_prices(self, asset_registry):
-        logger.info('****** Обновление цен *******')
         assets = asset_registry.get_all()
         if not assets:
             return
         prices = await MoexClient.get_all_prices()
-        async with async_session_maker() as session:
-            async with session.begin():
-                repo = self.repo(session=session)
-                for asset_id, ticker in assets.items():
-                    price = prices.get(ticker)
-                    if price is None:
-                        continue
-                    await repo.create(
-                        AssetPriceCreate(
-                            asset_id=asset_id,
-                            price=price,
-                            currency='RUB',
-                            source='moex',
-                        )
-                    )
-                    logger.info(f'💰 {ticker}: {price}')
-
-        logger.info('****** Обновление завершено ******')
+        async with self.session.begin():
+            repo = self.repo(self.session)
+            for asset_id, ticker in assets.items():
+                price = prices.get(ticker)
+                if price is None: continue
+                await repo.create(AssetPriceCreate(asset_id=asset_id, price=price, currency='RUB', source='moex'))
+                logger.info(f'💰 {ticker}: {price}')
