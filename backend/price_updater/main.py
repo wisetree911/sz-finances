@@ -2,7 +2,6 @@ import asyncio
 
 from app.core.database import async_session_maker
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from loguru import logger
 
 from price_updater.config import UPDATE_INTERVAL
 from price_updater.services.asset_registry import AssetRegistry
@@ -12,21 +11,17 @@ asset_registry = AssetRegistry()
 
 
 async def reload_assets():
-    """Обновление списка активов каждые N минут."""
     async with async_session_maker() as session:
         await asset_registry.load(session)
 
 
 async def job():
-    """Основная задача — обновление цен для всех активов."""
     async with async_session_maker() as session:
         service = PricesService(session)
         await service.update_prices(asset_registry)
 
 
 async def main():
-    logger.info('Price Updater старт')
-
     await reload_assets()
     await job()
 
