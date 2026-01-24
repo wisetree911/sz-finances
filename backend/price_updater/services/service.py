@@ -1,4 +1,3 @@
-from app.core.database import async_session_maker
 from app.schemas.asset_price import AssetPriceCreate
 from loguru import logger
 from price_updater.clients.moex_client import MoexClient
@@ -20,6 +19,9 @@ class PricesService:
             repo = self.repo(self.session)
             for asset_id, ticker in assets.items():
                 price = prices.get(ticker)
-                if price is None: continue
-                await repo.create(AssetPriceCreate(asset_id=asset_id, price=price, currency='RUB', source='moex'))
+                if price is None:
+                    continue
+                await repo.create(
+                    AssetPriceCreate(asset_id=asset_id, price=price, currency='RUB', source='moex')
+                )
                 logger.info(f'💰 {ticker}: {price}')
