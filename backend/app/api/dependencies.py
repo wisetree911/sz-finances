@@ -1,8 +1,4 @@
-from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
-from jose import JWTError, jwt
-from sqlalchemy.ext.asyncio import AsyncSession
-
+from app.contracts.repos import PortfolioRepo
 from app.core.config import settings
 from app.core.database import get_session
 from app.services.analytics import AnalyticsService
@@ -11,16 +7,25 @@ from app.services.auth import AuthService
 from app.services.portfolios import PortfolioService
 from app.services.trades import TradeService
 from app.services.users import UserService
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+from jose import JWTError, jwt
+from shared.repositories.portfolio import PortfolioRepository
+from sqlalchemy.ext.asyncio import AsyncSession
+
+
+async def get_portfolio_repo(session: AsyncSession = Depends(get_session)) -> PortfolioRepo:
+    return PortfolioRepository(session=session)
+
+
+async def get_portfolio_service(
+    repo: PortfolioRepo = Depends(get_portfolio_repo),
+) -> PortfolioService:
+    return PortfolioService(repo=repo)
 
 
 def get_user_service(session: AsyncSession = Depends(get_session)) -> UserService:
     return UserService(session=session)
-
-
-def get_portfolio_service(
-    session: AsyncSession = Depends(get_session),
-) -> PortfolioService:
-    return PortfolioService(session=session)
 
 
 def get_trade_service(session: AsyncSession = Depends(get_session)) -> TradeService:

@@ -1,13 +1,11 @@
-from fastapi import HTTPException
-from shared.repositories.portfolio import PortfolioRepository
-
+from app.contracts.repos import PortfolioRepo
 from app.schemas.portfolio import PortfolioCreatePublic, PortfolioUpdatePublic
+from fastapi import HTTPException
 
 
 class PortfolioService:
-    def __init__(self, session):
-        self.session = session
-        self.repo = PortfolioRepository(session=session)
+    def __init__(self, repo: PortfolioRepo):
+        self.repo = repo
 
     async def get_all_portfolios(self):
         return await self.repo.get_all()
