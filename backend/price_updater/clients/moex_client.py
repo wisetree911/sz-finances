@@ -27,7 +27,6 @@ class MoexClient:
             raise
         try:
             async with self._session.get(self.URL_ALL) as resp:
-                # советую добавить, чтобы не парсить html/ошибки как json
                 resp.raise_for_status()
                 data = await resp.json()
         except Exception as e:
