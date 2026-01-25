@@ -2,7 +2,6 @@ import asyncio
 
 from app.core.database import async_session_maker
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-
 from price_updater.clients.moex_client import MoexClient
 from price_updater.config import UPDATE_INTERVAL
 from price_updater.services.asset_registry import AssetRegistry
