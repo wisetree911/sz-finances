@@ -1,8 +1,7 @@
+from app.schemas.trade import TradeCreate, TradeUpdate
 from fastapi import HTTPException
 from shared.repositories.trade import TradeRepository
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.schemas.trade import TradeCreate, TradeUpdate
 
 
 class TradeService:

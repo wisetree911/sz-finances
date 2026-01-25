@@ -1,12 +1,6 @@
 from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
-from fastapi import HTTPException, status
-from jose import JWTError
-from shared.models.refresh_sessions import RefreshSession
-from shared.repositories.refresh_session import RefreshSessionRepository
-from shared.repositories.user import UserRepository
-
 from app.core.config import settings
 from app.core.security import (
     InvalidRefreshToken,
@@ -20,6 +14,11 @@ from app.core.security import (
 )
 from app.schemas.auth import LogoutIn, RefreshIn, RefreshSessionCreate, RegisterIn, Token
 from app.schemas.user import UserCreateAdm, UserResponsePublic
+from fastapi import HTTPException, status
+from jose import JWTError
+from shared.models.refresh_sessions import RefreshSession
+from shared.repositories.refresh_session import RefreshSessionRepository
+from shared.repositories.user import UserRepository
 
 
 # check db number of trans

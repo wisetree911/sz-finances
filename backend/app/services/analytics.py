@@ -1,12 +1,5 @@
 from datetime import datetime, timedelta
 
-from fastapi import HTTPException
-from shared.repositories.asset import AssetRepository
-from shared.repositories.asset_price import AssetPriceRepository
-from shared.repositories.portfolio import PortfolioRepository
-from shared.repositories.trade import TradeRepository
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.analytics.analytics_calc import (
     build_dynamics_positions,
     build_only_buy_positions,
@@ -26,6 +19,12 @@ from app.schemas.analytics import (
     SectorDistributionResponse,
     TopPosition,
 )
+from fastapi import HTTPException
+from shared.repositories.asset import AssetRepository
+from shared.repositories.asset_price import AssetPriceRepository
+from shared.repositories.portfolio import PortfolioRepository
+from shared.repositories.trade import TradeRepository
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 # убрать всю аналитику отсюлаёёда

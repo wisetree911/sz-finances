@@ -1,10 +1,9 @@
 from datetime import datetime
 
 from app.schemas.asset_price import AssetPriceCreate
+from shared.models.asset_price import AssetPrice
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from shared.models.asset_price import AssetPrice
 
 
 class AssetPriceRepository:

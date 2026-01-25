@@ -1,10 +1,9 @@
 from datetime import UTC, datetime
 
 from app.schemas.auth import RefreshSessionCreate
+from shared.models.refresh_sessions import RefreshSession
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from shared.models.refresh_sessions import RefreshSession
 
 
 class RefreshSessionRepository:

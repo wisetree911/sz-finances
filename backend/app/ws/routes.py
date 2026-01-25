@@ -1,6 +1,5 @@
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
-
 from app.ws.manager import ws_manager
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
 ws_router = APIRouter(prefix='/ws', tags=['Prices ws'])
 

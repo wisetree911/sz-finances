@@ -1,8 +1,7 @@
+from app.schemas.user import UserCreateAdm, UserUpdateAdm
 from fastapi import HTTPException
 from shared.repositories.user import UserRepository
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.schemas.user import UserCreateAdm, UserUpdateAdm
 
 
 class UserService:
