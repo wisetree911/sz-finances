@@ -7,7 +7,7 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from app.core.config import settings
-from app.core.database import Base
+from app.infrastructure.db import Base
 from shared.models import asset, asset_price, portfolio, refresh_sessions, trade, user  # noqa: F401
 
 
