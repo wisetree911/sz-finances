@@ -17,16 +17,16 @@ from app.schemas.user import UserCreateAdm, UserResponsePublic
 from fastapi import HTTPException, status
 from jose import JWTError
 from shared.models.refresh_sessions import RefreshSession
-from shared.repositories.refresh_session import RefreshSessionRepository
-from shared.repositories.user import UserRepository
+from shared.repositories.refresh_session import RefreshSessionRepositoryPostgres
+from shared.repositories.user import UserRepositoryPostgres
 
 
 # check db number of trans
 class AuthService:
     def __init__(self, session):
         self.session = session
-        self.rs_repo = RefreshSessionRepository(session=session)
-        self.user_repo = UserRepository(session=session)
+        self.rs_repo = RefreshSessionRepositoryPostgres(session=session)
+        self.user_repo = UserRepositoryPostgres(session=session)
 
     async def login(self, username: str, password: str):
         user = await self.user_repo.get_by_email(username)

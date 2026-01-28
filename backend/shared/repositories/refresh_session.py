@@ -6,7 +6,7 @@ from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
-class RefreshSessionRepository:
+class RefreshSessionRepositoryPostgres:
     def __init__(self, session: AsyncSession):
         self.session = session
 

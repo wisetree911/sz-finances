@@ -10,14 +10,14 @@ from app.services.users import UserService
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
-from shared.repositories.portfolio import PortfolioRepository
-from shared.repositories.trade import TradeRepository
-from shared.repositories.user import UserRepository
+from shared.repositories.portfolio import PortfolioRepositoryPostgres
+from shared.repositories.trade import TradeRepositoryPostgres
+from shared.repositories.user import UserRepositoryPostgres
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
 async def get_portfolio_repo(session: AsyncSession = Depends(get_session)) -> PortfolioRepo:
-    return PortfolioRepository(session=session)
+    return PortfolioRepositoryPostgres(session=session)
 
 
 async def get_portfolio_service(
@@ -27,7 +27,7 @@ async def get_portfolio_service(
 
 
 async def get_trade_repo(session: AsyncSession = Depends(get_session)) -> TradeRepo:
-    return TradeRepository(session=session)
+    return TradeRepositoryPostgres(session=session)
 
 
 async def get_trade_service(repo: TradeRepo = Depends(get_trade_repo)) -> TradeService:
@@ -35,7 +35,7 @@ async def get_trade_service(repo: TradeRepo = Depends(get_trade_repo)) -> TradeS
 
 
 async def get_user_repo(session: AsyncSession = Depends(get_session)) -> UserRepo:
-    return UserRepository(session=session)
+    return UserRepositoryPostgres(session=session)
 
 
 async def get_user_service(repo: UserRepo = Depends(get_user_repo)) -> UserService:

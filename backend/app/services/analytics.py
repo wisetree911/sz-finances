@@ -20,10 +20,10 @@ from app.schemas.analytics import (
     TopPosition,
 )
 from fastapi import HTTPException
-from shared.repositories.asset import AssetRepository
-from shared.repositories.asset_price import AssetPriceRepository
-from shared.repositories.portfolio import PortfolioRepository
-from shared.repositories.trade import TradeRepository
+from shared.repositories.asset import AssetRepositoryPostgres
+from shared.repositories.asset_price import AssetPriceRepositoryPostgres
+from shared.repositories.portfolio import PortfolioRepositoryPostgres
+from shared.repositories.trade import TradeRepositoryPostgres
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -31,10 +31,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 class AnalyticsService:
     def __init__(self, session: AsyncSession):
         self.session = session
-        self.asset_price_repo = AssetPriceRepository(session=session)
-        self.portfolio_repo = PortfolioRepository(session=session)
-        self.asset_repo = AssetRepository(session=session)
-        self.trade_repo = TradeRepository(session=session)
+        self.asset_price_repo = AssetPriceRepositoryPostgres(session=session)
+        self.portfolio_repo = PortfolioRepositoryPostgres(session=session)
+        self.asset_repo = AssetRepositoryPostgres(session=session)
+        self.trade_repo = TradeRepositoryPostgres(session=session)
 
     async def portfolio_snapshot(self, portfolio_id: int) -> PortfolioSnapshotResponse:
         portfolio = await self.portfolio_repo.get_by_id(portfolio_id)

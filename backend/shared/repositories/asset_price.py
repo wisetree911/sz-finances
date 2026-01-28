@@ -7,7 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
-class AssetPriceRepository:
+class AssetPriceRepositoryPostgres:
     def __init__(self, session: AsyncSession):
         self.session = session
 

@@ -1,4 +1,4 @@
-from shared.repositories.asset import AssetRepository
+from shared.repositories.asset import AssetRepositoryPostgres
 
 
 class AssetRegistry:
@@ -6,7 +6,7 @@ class AssetRegistry:
         self.assets: dict[int, str] = {}
 
     async def load(self, session):
-        repo = AssetRepository(session=session)
+        repo = AssetRepositoryPostgres(session=session)
         rows = await repo.get_all()
         self.assets = {row.id: row.ticker for row in rows}
 
