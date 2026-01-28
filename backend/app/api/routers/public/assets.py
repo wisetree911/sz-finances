@@ -1,7 +1,7 @@
 from app.api.dependencies import get_asset_service
-from app.schemas.asset import AssetResponsePublic
+from app.schemas.asset import AssetResponsePublic, Page
 from app.services.assets import AssetService
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 
 router = APIRouter(prefix='/assets', tags=['Assets'])
 
@@ -30,10 +30,13 @@ async def get_asset_by_ticker(
 
 @router.get(
     '/',
-    response_model=list[AssetResponsePublic],
-    summary='Информация обо всех существующих активах.',
+    response_model=Page[AssetResponsePublic],
+    summary='Все активы рынка.',
 )
 async def get_assets(
+    limit: int = Query(50, ge=1, le=200),
+    offset: int = Query(0, ge=0),
     service: AssetService = Depends(get_asset_service),
-) -> list[AssetResponsePublic]:
-    return await service.get_all()
+) -> Page[AssetResponsePublic]:
+    items, total = await service.get_all(limit=limit, offset=offset)
+    return Page[AssetResponsePublic](items=items, total=total, limit=limit, offset=offset)

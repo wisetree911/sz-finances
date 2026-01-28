@@ -9,8 +9,10 @@ class AssetService:
         self.session = session
         self.repo = AssetRepository(session=session)
 
-    async def get_all(self):
-        return await self.repo.get_all()
+    async def get_all(self, *, limit: int, offset: int):
+        items = await self.repo.get_all(limit=limit, offset=offset)
+        total = await self.repo.count()
+        return items, total
 
     async def get_by_id(self, asset_id: int):
         asset = await self.repo.get_by_id(asset_id=asset_id)

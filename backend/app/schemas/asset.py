@@ -1,5 +1,9 @@
-from pydantic import BaseModel
+from typing import Generic, TypeVar
+
+from pydantic import BaseModel, ConfigDict, Field
 from pydantic.types import AwareDatetime
+
+T = TypeVar('T')
 
 
 class AssetFields(BaseModel):
@@ -9,8 +13,18 @@ class AssetFields(BaseModel):
     sector: str
 
 
+class Page(BaseModel, Generic[T]):
+    items: list[T]
+    total: int = Field(ge=0)
+    limit: int = Field(ge=1, le=200)
+    offset: int = Field(ge=0)
+
+
 class AssetResponsePublic(AssetFields):
     id: int
+    model_config = ConfigDict(
+        from_attributes=True,
+    )
 
 
 class AssetResponseAdm(AssetFields):

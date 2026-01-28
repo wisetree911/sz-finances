@@ -1,6 +1,8 @@
+from collections.abc import Sequence
+
 from app.schemas.asset import AssetCreateAdm, AssetUpdateAdm
 from shared.models.asset import Asset
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -15,8 +17,8 @@ class AssetRepository:
         await self.session.refresh(obj)
         return obj
 
-    async def get_all(self):
-        query = select(Asset)
+    async def get_all(self, limit: int, offset: int):
+        query = select(Asset).order_by(Asset.id).limit(limit).offset(offset)
         result = await self.session.execute(query)
         return result.scalars().all()
 
@@ -42,8 +44,13 @@ class AssetRepository:
         result = await self.session.execute(query)
         return result.scalar_one_or_none()
 
-    async def get_assets_by_ids(self, ids: list[int]) -> dict[int, Asset]:
+    async def get_assets_by_ids(self, ids: list[int]) -> Sequence[Asset]:
         query = select(Asset).where(Asset.id.in_(ids))
         result = await self.session.execute(query)
         rows = result.scalars().all()
         return rows
+
+    async def count(self) -> int:
+        query = select(func.count()).select_from(Asset)
+        result = await self.session.execute(query)
+        return int(result.scalar_one())
