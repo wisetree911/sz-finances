@@ -1,8 +1,8 @@
 from datetime import datetime
 from decimal import Decimal
 
-from app.schemas.asset_price import AssetPriceCreate
 from app.models import AssetPrice
+from app.schemas.asset_price import AssetPriceCreate
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 

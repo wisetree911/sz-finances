@@ -1,6 +1,6 @@
-from app.schemas.trade import TradeCreate, TradeUpdate
 from app.models import Portfolio
 from app.models.trade import Trade
+from app.schemas.trade import TradeCreate, TradeUpdate
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 

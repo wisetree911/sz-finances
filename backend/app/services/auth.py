@@ -12,13 +12,13 @@ from app.core.security import (
     hash_password,
     verify_password,
 )
+from app.models import RefreshSession
+from app.repositories import UserRepositoryPostgres
+from app.repositories.refresh_session import RefreshSessionRepositoryPostgres
 from app.schemas.auth import LogoutIn, RefreshIn, RefreshSessionCreate, RegisterIn, Token
 from app.schemas.user import UserCreateAdm, UserResponsePublic
 from fastapi import HTTPException, status
 from jose import JWTError
-from app.models import RefreshSession
-from app.repositories.refresh_session import RefreshSessionRepositoryPostgres
-from app.repositories import UserRepositoryPostgres
 
 
 # check db number of trans

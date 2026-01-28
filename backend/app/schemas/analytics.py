@@ -53,7 +53,9 @@ class PortfolioSnapshotResponse(APIModel):
     unrealized_return_pct: Percent = Field(..., description='Unrelized return of portfolio.')
     cost_basis: Money = Field(..., description='Value invested in portfolio initially.')
     currency: Currency = Field(..., description='Currency of portfolio, for example: RUB.')
-    positions_count: NonNegativeInt = Field(..., description='Number of unique assets in portfolio.')
+    positions_count: NonNegativeInt = Field(
+        ..., description='Number of unique assets in portfolio.'
+    )
     top_positions: list[TopPosition] = Field(
         default_factory=list,
         description='Top 3 positions in portfolio by value part in portfolio.',

@@ -1,6 +1,11 @@
 from app.contracts.repos import PortfolioRepository, TradeRepoRepository, UserRepoRepository
 from app.core.config import settings
 from app.infrastructure.db.database import get_session
+from app.repositories import (
+    PortfolioRepositoryPostgres,
+    TradeRepositoryPostgres,
+    UserRepositoryPostgres,
+)
 from app.services.analytics import AnalyticsService
 from app.services.assets import AssetService
 from app.services.auth import AuthService
@@ -10,9 +15,6 @@ from app.services.users import UserService
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
-from app.repositories import PortfolioRepositoryPostgres
-from app.repositories import TradeRepositoryPostgres
-from app.repositories import UserRepositoryPostgres
 from sqlalchemy.ext.asyncio import AsyncSession
 
 

@@ -1,9 +1,9 @@
+from app.models import Portfolio
 from app.schemas.portfolio import (
     PortfolioCreateAdm,
     PortfolioCreatePublic,
     PortfolioUpdateAdm,
 )
-from app.models import Portfolio
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 

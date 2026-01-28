@@ -1,7 +1,7 @@
 from collections.abc import Sequence
 
-from app.schemas.asset import AssetCreateAdm, AssetUpdateAdm
 from app.models.asset import Asset
+from app.schemas.asset import AssetCreateAdm, AssetUpdateAdm
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 

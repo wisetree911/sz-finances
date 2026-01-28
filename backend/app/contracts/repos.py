@@ -1,12 +1,11 @@
 from collections.abc import Sequence
 from typing import Protocol
 
+from app.models import Portfolio, User
+from app.models.trade import Trade
 from app.schemas.portfolio import PortfolioCreateAdm, PortfolioCreatePublic, PortfolioUpdateAdm
 from app.schemas.trade import TradeCreate, TradeUpdate
 from app.schemas.user import UserCreateAdm, UserUpdateAdm
-from app.models import Portfolio
-from app.models.trade import Trade
-from app.models import User
 
 
 class PortfolioRepository(Protocol):

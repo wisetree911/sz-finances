@@ -11,6 +11,12 @@ from app.analytics.analytics_calc import (
     calc_unrealized_return_pct,
 )
 from app.analytics.models import PortfolioPositionPrepared, SectorPosition, TradeDTO
+from app.repositories import (
+    AssetRepositoryPostgres,
+    PortfolioRepositoryPostgres,
+    TradeRepositoryPostgres,
+)
+from app.repositories.asset_price import AssetPriceRepositoryPostgres
 from app.schemas.analytics import (
     PortfolioDynamicsResponse,
     PortfolioPrice,
@@ -20,10 +26,6 @@ from app.schemas.analytics import (
     TopPosition,
 )
 from fastapi import HTTPException
-from app.repositories import AssetRepositoryPostgres
-from app.repositories.asset_price import AssetPriceRepositoryPostgres
-from app.repositories import PortfolioRepositoryPostgres
-from app.repositories import TradeRepositoryPostgres
 from sqlalchemy.ext.asyncio import AsyncSession
 
 

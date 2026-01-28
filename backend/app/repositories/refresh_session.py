@@ -1,7 +1,7 @@
 from datetime import UTC, datetime
 
-from app.schemas.auth import RefreshSessionCreate
 from app.models import RefreshSession
+from app.schemas.auth import RefreshSessionCreate
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
