@@ -20,7 +20,6 @@
 - Redis — кэш + pub/sub
 
 #  QUICKSTART
-cd backend 
 
 docker compose --env-file .env.example up -d --build
 
