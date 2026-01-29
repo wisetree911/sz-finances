@@ -32,7 +32,7 @@ services:
   backend:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: backend/Dockerfile
     container_name: backend
     restart: always
     depends_on:
@@ -55,10 +55,6 @@ services:
       REDIS_PRICES_CHANNEL: ${REDIS_PRICES_CHANNEL}
     ports:
       - "8000:8000"
-  
-  
 
-    
-      
 volumes:
   postgres_data:

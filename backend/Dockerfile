@@ -1,29 +1,28 @@
-FROM python:3.13-slim
+FROM python:3.11-slim
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     libpq-dev \
     postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --upgrade pip
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 
+    PYTHONUNBUFFERED=1 \
+    UV_NO_DEV=1
 
 WORKDIR /backend
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY pyproject.toml uv.lock ./
 
-COPY ./app /backend/app
-COPY ./alembic.ini /backend/alembic.ini
-COPY ./entrypoint.sh /backend/entrypoint.sh
-COPY ./migrations /backend/migrations
-COPY ./shared /backend/shared
+RUN uv sync --locked --no-install-project
 
-RUN chmod +x /backend/entrypoint.sh
+COPY backend/ ./backend/
+
+WORKDIR /backend/backend
+
+RUN chmod +x ./entrypoint.sh
 
 EXPOSE 8000
-
-ENTRYPOINT ["/backend/entrypoint.sh"]
+ENTRYPOINT ["./entrypoint.sh"]
