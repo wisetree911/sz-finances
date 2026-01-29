@@ -1,5 +1,24 @@
 # SZfinancEZ — это сервис для анализа инвестиционного портфеля с использованием реальных данных MOEX
 
+# Проект демонстрирует:
+- проектирование REST API
+- асинхронный backend
+- работу с реальными финансовыми данными (MOEX)
+- расчёт PnL и другие метрики по истории сделок (FIFO)
+
+## Архитектура
+
+- Backend API (FastAPI)
+  - Auth (JWT access/refresh)
+  - Портфели / Активы / Сделки
+  - Модуль аналитики
+- Price updater microservice
+  - Достает данные из MOEX API
+  - Обновляет в PostgreSQL
+  - Публикует обновления через Redis
+- PostgreSQL — основное хранилище
+- Redis — кэш + pub/sub
+
 #  QUICKSTART
 cd backend 
 
