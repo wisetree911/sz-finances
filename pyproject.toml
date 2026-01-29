@@ -18,7 +18,7 @@ select = ["E", "F", "I", "B", "UP"]
 [project]
 name = "sz-finances"
 version = "0.1.0"
-requires-python = ">=3.12"
+requires-python = ">=3.11"
 dependencies = [
     "aiohttp>=3.13.3",
     "alembic>=1.18.2",
