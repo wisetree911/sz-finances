@@ -34,7 +34,11 @@ class PortfolioFields(APIModel):
     currency: Currency = Field(..., description='Portfolio currency')
 
 
-class PortfolioCreatePublic(PortfolioFields):
+class PortfolioCreateAdm(PortfolioFields):
+    user_id: PositiveInt
+
+
+class PortfolioCreatePublic(PortfolioCreateAdm):
     pass
 
 
@@ -47,10 +51,6 @@ class PortfolioUpdatePublic(APIModel):
         if not self.model_dump(exclude_none=True):
             raise ValueError('At least one field must be provided')
         return self
-
-
-class PortfolioCreateAdm(PortfolioFields):
-    user_id: PositiveInt
 
 
 class PortfolioUpdateAdm(APIModel):
