@@ -48,7 +48,7 @@ docker compose --env-file .env.example up -d --build
 
 
 # Используемые технологии и инструменты
-•	Python 3.13
+•	Python 3.11
 •	FastAPI
 •   WebSocket
 •	Pydantic
@@ -67,7 +67,6 @@ docker compose --env-file .env.example up -d --build
 - обеспечение скорости модуля аналитики raw sql запросами
 - улучшение микросервиса price_updater
 - система задач/воркеров
-- unit-тесты
 - добавление новых источников данных
 - микрсервис на Python/Go для импорта портфеля из Т-инвестиций
 - frontend клиент (react, next.js)
