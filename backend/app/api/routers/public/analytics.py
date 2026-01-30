@@ -1,4 +1,6 @@
 from app.api.dependencies import get_analytics_service, get_current_user
+from app.infrastructure.redis.deps import get_cache
+from app.infrastructure.redis.redis_cache import RedisCache
 from app.schemas.analytics import (
     PortfolioDynamicsResponse,
     PortfolioSnapshotResponse,
@@ -19,10 +21,15 @@ async def get_portfolio_snapshot_for_user(
     portfolio_id: int,
     current_user=Depends(get_current_user),
     service: AnalyticsService = Depends(get_analytics_service),
+    cache: RedisCache = Depends(get_cache),
 ) -> PortfolioSnapshotResponse:
-    return await service.portfolio_snapshot_for_user(
-        portfolio_id=portfolio_id, user_id=current_user.id
-    )
+    key = f'user:{current_user.id}:portfolio:{portfolio_id}snapshot:v1'
+    cached = await cache.get_json(key)
+    if cached is not None:
+        return PortfolioSnapshotResponse.model_validate(cached)
+    dto = await service.portfolio_snapshot(portfolio_id=portfolio_id)
+    await cache.set_json(key, dto.model_dump(mode='json'), ttl=20)
+    return dto
 
 
 @router.get(
