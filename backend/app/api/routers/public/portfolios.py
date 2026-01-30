@@ -1,6 +1,4 @@
 from app.api.dependencies import get_current_user, get_portfolio_service
-from app.infrastructure.redis.deps import get_cache
-from app.infrastructure.redis.redis_cache import RedisCache
 from app.schemas.portfolio import (
     PortfolioCreatePublic,
     PortfolioResponseAdm,
@@ -33,20 +31,8 @@ async def get_by_portfolio_id(
     portfolio_id: int,
     current_user=Depends(get_current_user),
     service: PortfolioService = Depends(get_portfolio_service),
-    cache: RedisCache = Depends(get_cache),
 ) -> PortfolioResponseAdm:
-    key = f'user:{current_user.id}:portfolio:{portfolio_id}:v1'
-
-    cached = await cache.get_json(key)
-    if cached is not None:
-        return PortfolioResponseAdm.model_validate(cached)
-
-    result = await service.get_portfolio_for_user(
-        portfolio_id=portfolio_id, user_id=current_user.id
-    )
-    dto = PortfolioResponseAdm.model_validate(result, from_attributes=True)
-    await cache.set_json(key, dto.model_dump(mode='json'), ttl=30)
-    return dto
+    return await service.get_portfolio_for_user(portfolio_id=portfolio_id, user_id=current_user.id)
 
 
 @router.delete(
