@@ -10,7 +10,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/api/auth/login')
 
 async def get_current_user(
     token: str = Depends(oauth2_scheme),
-    service: UserService = Depends(get_user_service), # noqa: B008
+    service: UserService = Depends(get_user_service),  # noqa: B008
 ):
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
