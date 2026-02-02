@@ -20,12 +20,6 @@ class RefreshIn(APIModel):
     refresh_token: str
 
 
-# class UserRegister(APIModel):
-#     name: str
-#     email: EmailStr
-#     password: str
-
-
 class LogoutIn(APIModel):
     refresh_token: str
 
