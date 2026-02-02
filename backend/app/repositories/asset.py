@@ -11,7 +11,7 @@ class AssetRepositoryPostgres:
         self.session = session
 
     async def create(self, obj_in: AssetCreateAdm):
-        obj = Asset(**obj_in.dict())
+        obj = Asset(**obj_in.model_dump())
         self.session.add(obj)
         await self.session.commit()
         await self.session.refresh(obj)
@@ -28,7 +28,7 @@ class AssetRepositoryPostgres:
         return result.scalar_one_or_none()
 
     async def update(self, asset: Asset, obj_in: AssetUpdateAdm):
-        update_data = obj_in.dict(exclude_unset=True)
+        update_data = obj_in.model_dump(exclude_unset=True)
         for field, value in update_data.items():
             setattr(asset, field, value)
         await self.session.commit()

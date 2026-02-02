@@ -10,7 +10,7 @@ class TradeRepositoryPostgres:
         self.session = session
 
     async def create(self, obj_in: TradeCreate):
-        obj = Trade(**obj_in.dict())
+        obj = Trade(**obj_in.model_dump())
         self.session.add(obj)
         await self.session.commit()
         await self.session.refresh(obj)
@@ -27,7 +27,7 @@ class TradeRepositoryPostgres:
         return result.scalar_one_or_none()
 
     async def update(self, trade: Trade, obj_in: TradeUpdate):
-        update_data = obj_in.dict(exclude_unset=True)
+        update_data = obj_in.model_dump(exclude_unset=True)
         for field, value in update_data.items():
             setattr(trade, field, value)
         await self.session.commit()

@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from datetime import datetime
 from decimal import Decimal
 
@@ -12,7 +13,7 @@ class AssetPriceRepositoryPostgres:
         self.session = session
 
     async def create(self, obj_in: AssetPriceCreate) -> AssetPrice:
-        obj = AssetPrice(**obj_in.dict())
+        obj = AssetPrice(**obj_in.model_dump())
         self.session.add(obj)
         return obj
 
@@ -26,7 +27,7 @@ class AssetPriceRepositoryPostgres:
         result = await self.session.execute(query)
         return result.scalar_one_or_none()
 
-    async def get_prices_since(self, ids: list[int], since: datetime) -> list[AssetPrice]:
+    async def get_prices_since(self, ids: list[int], since: datetime) -> Sequence[AssetPrice]:
         if not ids:
             return []
         query = select(AssetPrice).where(

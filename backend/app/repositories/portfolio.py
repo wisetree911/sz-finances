@@ -13,7 +13,7 @@ class PortfolioRepositoryPostgres:
         self.session = session
 
     async def create(self, payload: PortfolioCreateAdm):
-        obj = Portfolio(**payload.dict())
+        obj = Portfolio(**payload.model_dump())
         self.session.add(obj)
         await self.session.commit()
         await self.session.refresh(obj)
@@ -30,7 +30,7 @@ class PortfolioRepositoryPostgres:
         return result.scalar_one_or_none()
 
     async def update(self, portfolio: Portfolio, payload: PortfolioUpdateAdm):
-        update_data = payload.dict(exclude_unset=True)
+        update_data = payload.model_dump(exclude_unset=True)
         for field, value in update_data.items():
             setattr(portfolio, field, value)
         await self.session.commit()

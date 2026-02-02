@@ -11,7 +11,7 @@ class RefreshSessionRepositoryPostgres:
         self.session = session
 
     async def create(self, obj_in: RefreshSessionCreate):
-        obj = RefreshSession(**obj_in.dict())
+        obj = RefreshSession(**obj_in.model_dump())
         self.session.add(obj)
         await self.session.commit()
         await self.session.refresh(obj)
