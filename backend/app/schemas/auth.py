@@ -10,17 +10,13 @@ class APIModel(BaseModel):
     )
 
 
-class Token(APIModel):
+class TokenPair(APIModel):
     access_token: str
     refresh_token: str
     token_type: str = 'bearer'
 
 
-class RefreshIn(APIModel):
-    refresh_token: str
-
-
-class LogoutIn(APIModel):
+class RefreshToken(APIModel):
     refresh_token: str
 
 

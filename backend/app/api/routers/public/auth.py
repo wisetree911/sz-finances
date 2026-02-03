@@ -1,7 +1,7 @@
 from typing import Annotated
 
 from app.api.dependencies import get_auth_service
-from app.schemas.auth import LogoutIn, RefreshIn, Token
+from app.schemas.auth import RefreshToken, TokenPair
 from app.schemas.user import UserRegister
 from app.services.auth import AuthService
 from fastapi import APIRouter, Depends, status
@@ -21,7 +21,7 @@ async def register(payload: UserRegister, service: AuthService = Depends(get_aut
 
 @router.post(
     '/login',
-    response_model=Token,
+    response_model=TokenPair,
     summary='Логин (получить access/refresh)',
     description='Принимает form-data: username, password (OAuth2PasswordRequestForm).',
 )
@@ -34,10 +34,10 @@ async def login(
 
 @router.post(
     '/refresh',
-    response_model=Token,
+    response_model=TokenPair,
     summary='Обновить токены по refresh',
 )
-async def refresh(payload: RefreshIn, service: AuthService = Depends(get_auth_service)):
+async def refresh(payload: RefreshToken, service: AuthService = Depends(get_auth_service)):
     return await service.refresh(payload)
 
 
@@ -46,5 +46,5 @@ async def refresh(payload: RefreshIn, service: AuthService = Depends(get_auth_se
     status_code=204,
     summary='Выйти (инвалидировать refresh)',
 )
-async def logout(payload: LogoutIn, service: AuthService = Depends(get_auth_service)):
+async def logout(payload: RefreshToken, service: AuthService = Depends(get_auth_service)):
     return await service.logout(payload=payload)

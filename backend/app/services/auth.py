@@ -15,7 +15,7 @@ from app.core.security.security import (
 from app.models import RefreshSession
 from app.repositories import UserRepositoryPostgres
 from app.repositories.refresh_session import RefreshSessionRepositoryPostgres
-from app.schemas.auth import LogoutIn, RefreshIn, RefreshSessionCreate, Token
+from app.schemas.auth import RefreshSessionCreate, RefreshToken, TokenPair
 from app.schemas.user import UserCreateAdm, UserRegister, UserResponsePublic
 from fastapi import HTTPException, status
 from jose import JWTError
@@ -51,9 +51,9 @@ class AuthService:
             )
         )
 
-        return Token(access_token=access_token, refresh_token=refresh_token)
+        return TokenPair(access_token=access_token, refresh_token=refresh_token)
 
-    async def refresh(self, payload: RefreshIn):
+    async def refresh(self, payload: RefreshToken):
         try:
             user_id, jti = decode_refresh_token(token=payload.refresh_token)
         except InvalidRefreshToken as err:
@@ -92,9 +92,9 @@ class AuthService:
 
         access_token = create_access_token(user_id=int(user_id))
 
-        return Token(access_token=access_token, refresh_token=new_refresh_token)
+        return TokenPair(access_token=access_token, refresh_token=new_refresh_token)
 
-    async def logout(self, payload: LogoutIn):
+    async def logout(self, payload: RefreshToken):
         try:
             jti = get_jti_from_token(token=payload.refresh_token)
         except JWTError:
