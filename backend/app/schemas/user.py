@@ -56,3 +56,4 @@ class UserRegister(APIModel):
     name: str
     email: EmailStr
     password: str
+    role: str  # tmp
