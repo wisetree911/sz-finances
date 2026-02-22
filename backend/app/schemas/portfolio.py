@@ -34,12 +34,12 @@ class PortfolioFields(APIModel):
     currency: Currency = Field(..., description='Portfolio currency')
 
 
-class PortfolioCreateAdm(PortfolioFields):
-    user_id: PositiveInt
-
-
-class PortfolioCreatePublic(PortfolioCreateAdm):
+class PortfolioCreatePublic(PortfolioFields):
     pass
+
+
+class PortfolioCreateAdm(PortfolioCreatePublic):
+    user_id: PositiveInt
 
 
 class PortfolioUpdatePublic(APIModel):
