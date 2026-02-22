@@ -1,4 +1,5 @@
 from app.api.dependencies import get_analytics_service
+from app.core.security.dependencies import require_admin
 from app.schemas.analytics import (
     PortfolioDynamicsResponse,
     PortfolioSnapshotResponse,
@@ -7,7 +8,11 @@ from app.schemas.analytics import (
 from app.services.analytics import AnalyticsService
 from fastapi import APIRouter, Depends
 
-router = APIRouter(prefix='/analytics', tags=['Analytics'])
+router = APIRouter(
+    prefix='/analytics',
+    tags=['Analytics'],
+    dependencies=[Depends(require_admin)],
+)
 
 
 @router.get('/{portfolio_id}/snapshot')

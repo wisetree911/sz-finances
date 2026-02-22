@@ -1,5 +1,8 @@
+from typing import Annotated
+
 from app.api.dependencies import get_user_service
 from app.core.config import settings
+from app.models.user import User
 from app.services.users import UserService
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -30,4 +33,15 @@ async def get_current_user(
     user = await service.get_by_id(int(user_id))
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+    return user
+
+
+async def require_admin(
+    user: Annotated[User, Depends(get_current_user)],
+):
+    if not (user.role == 'admin'):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail='Admin privileges required',
+        )
     return user
