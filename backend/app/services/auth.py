@@ -111,6 +111,7 @@ class AuthService:
                 name=payload.name,
                 email=payload.email,
                 hashed_password=hash_password(payload.password),
+                role=payload.role,
             )
         )
-        return UserResponsePublic(name=user.name, email=user.email)
+        return UserResponsePublic(name=user.name, email=user.email, role=user.role)
