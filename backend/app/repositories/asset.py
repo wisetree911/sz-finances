@@ -1,7 +1,7 @@
 from collections.abc import Sequence
 
 from app.models.asset import Asset
-from app.schemas.asset import AssetCreateAdm, AssetUpdate
+from app.schemas.asset import AssetCreate, AssetUpdate
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -10,7 +10,7 @@ class AssetRepositoryPostgres:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def create(self, obj_in: AssetCreateAdm):
+    async def create(self, obj_in: AssetCreate):
         obj = Asset(**obj_in.model_dump())
         self.session.add(obj)
         await self.session.commit()

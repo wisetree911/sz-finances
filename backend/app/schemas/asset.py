@@ -74,7 +74,7 @@ class AssetResponse(AssetFields):
     id: PositiveInt
 
 
-class AssetCreateAdm(AssetFields):
+class AssetCreate(AssetFields):
     pass
 
 

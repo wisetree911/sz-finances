@@ -1,5 +1,5 @@
 from app.repositories import AssetRepositoryPostgres
-from app.schemas.asset import AssetCreateAdm, AssetUpdate
+from app.schemas.asset import AssetCreate, AssetUpdate
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -26,7 +26,7 @@ class AssetService:
             raise HTTPException(404, 'SZ asset not found')
         return asset
 
-    async def create(self, obj_in: AssetCreateAdm):
+    async def create(self, obj_in: AssetCreate):
         return await self.repo.create(obj_in=obj_in)
 
     async def delete(self, asset_id: int):
