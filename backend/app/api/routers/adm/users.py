@@ -1,6 +1,6 @@
 from app.api.dependencies import get_user_service
 from app.core.security.dependencies import require_admin
-from app.schemas.user import UserCreateAdm, UserResponseAdm, UserUpdateAdm
+from app.schemas.user import UserCreate, UserResponseAdm, UserUpdate
 from app.services.users import UserService
 from fastapi import APIRouter, Depends, status
 
@@ -27,7 +27,7 @@ async def get_users(
 
 @router.post('/', status_code=status.HTTP_201_CREATED, summary='Create user')
 async def create_user(
-    payload: UserCreateAdm, service: UserService = Depends(get_user_service)
+    payload: UserCreate, service: UserService = Depends(get_user_service)
 ) -> UserResponseAdm:
     return await service.create(obj_in=payload)
 
@@ -45,7 +45,7 @@ async def delete_user(user_id: int, service: UserService = Depends(get_user_serv
 @router.patch('/{user_id}', summary='Update user bu user_id')
 async def update(
     user_id: int,
-    payload: UserUpdateAdm,
+    payload: UserUpdate,
     service: UserService = Depends(get_user_service),
 ) -> UserResponseAdm:
     return await service.update(user_id=user_id, payload=payload)

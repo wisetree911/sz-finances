@@ -17,23 +17,13 @@ class UserFields(APIModel):
     role: Role = Field(default=Role.user)
 
 
-class UserCreatePublic(UserFields):
-    pass
-
-
-class UserCreateAdm(UserFields):
+class UserCreate(UserFields):
     hashed_password: str | None = None
 
 
-class UserUpdatePublic(UserFields):
+class UserUpdate(UserFields):
     name: str | None = None
     email: EmailStr | None = None
-
-
-class UserUpdateAdm(UserFields):
-    name: str | None = None
-    email: EmailStr | None = None
-    hashed_password: str | None = None
 
 
 class UserResponsePublic(UserFields):

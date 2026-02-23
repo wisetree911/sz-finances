@@ -1,6 +1,6 @@
 from app.api.dependencies import get_user_service
 from app.core.security.dependencies import get_current_user
-from app.schemas.user import UserResponsePublic, UserUpdatePublic
+from app.schemas.user import UserResponsePublic, UserUpdate
 from app.services.users import UserService
 from fastapi import APIRouter, Depends, status
 
@@ -26,7 +26,7 @@ async def delete_user(
 
 @router.patch('/me', response_model=UserResponsePublic)
 async def update(
-    payload: UserUpdatePublic,
+    payload: UserUpdate,
     current_user=Depends(get_current_user),
     service: UserService = Depends(get_user_service),
 ) -> UserResponsePublic:
