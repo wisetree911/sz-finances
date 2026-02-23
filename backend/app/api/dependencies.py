@@ -1,4 +1,4 @@
-from app.contracts.repos import PortfolioRepository, TradeRepoRepository, UserRepoRepository
+from app.contracts.repos import PortfolioRepository, TradeRepository, UserRepository
 from app.infrastructure.db.database import get_session
 from app.repositories import (
     PortfolioRepositoryPostgres,
@@ -25,19 +25,19 @@ async def get_portfolio_service(
     return PortfolioService(repo=repo)
 
 
-async def get_trade_repo(session: AsyncSession = Depends(get_session)) -> TradeRepoRepository:
+async def get_trade_repo(session: AsyncSession = Depends(get_session)) -> TradeRepository:
     return TradeRepositoryPostgres(session=session)
 
 
-async def get_trade_service(repo: TradeRepoRepository = Depends(get_trade_repo)) -> TradeService:
+async def get_trade_service(repo: TradeRepository = Depends(get_trade_repo)) -> TradeService:
     return TradeService(repo=repo)
 
 
-async def get_user_repo(session: AsyncSession = Depends(get_session)) -> UserRepoRepository:
+async def get_user_repo(session: AsyncSession = Depends(get_session)) -> UserRepository:
     return UserRepositoryPostgres(session=session)
 
 
-async def get_user_service(repo: UserRepoRepository = Depends(get_user_repo)) -> UserService:
+async def get_user_service(repo: UserRepository = Depends(get_user_repo)) -> UserService:
     return UserService(repo=repo)
 
 
