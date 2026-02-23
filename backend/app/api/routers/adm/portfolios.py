@@ -1,4 +1,5 @@
 from app.api.dependencies import get_portfolio_service
+from app.core.security.dependencies import require_admin
 from app.schemas.portfolio import (
     PortfolioCreateAdm,
     PortfolioResponse,
@@ -7,7 +8,11 @@ from app.schemas.portfolio import (
 from app.services.portfolios import PortfolioService
 from fastapi import APIRouter, Depends, status
 
-router = APIRouter(prefix='/portfolios', tags=['Portfolios'])
+router = APIRouter(
+    prefix='/portfolios',
+    tags=['Portfolios'],
+    dependencies=[Depends(require_admin)],
+)
 
 
 @router.get('/{portfolio_id}')
