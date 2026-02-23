@@ -1,9 +1,14 @@
 from app.api.dependencies import get_user_service
+from app.core.security.dependencies import require_admin
 from app.schemas.user import UserCreateAdm, UserResponseAdm, UserUpdateAdm
 from app.services.users import UserService
 from fastapi import APIRouter, Depends, status
 
-router = APIRouter(prefix='/users', tags=['Users'])
+router = APIRouter(
+    prefix='/users',
+    tags=['Users'],
+    dependencies=[Depends(require_admin)],
+)
 
 
 @router.get('/{user_id}', summary='Get detailed user info by user_id')
