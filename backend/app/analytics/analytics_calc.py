@@ -12,7 +12,7 @@ from app.analytics.models import (
 )
 
 
-def build_only_buy_positions(
+def build_remaining_buy_lots_fifo(
     trades: list[TradeDTO], current_prices, assets
 ) -> list[PortfolioPositionPrepared]:
     id_to_lot = {}
@@ -92,7 +92,7 @@ def calc_unrealized_return_pct(unrealized_pnl: Decimal, cost_basis: Decimal):
 
 
 def build_sector_positions(trades: list[TradeDTO], current_prices, assets) -> list[SectorPosition]:
-    portfolio_positions = build_only_buy_positions(
+    portfolio_positions = build_remaining_buy_lots_fifo(
         trades=trades, current_prices=current_prices, assets=assets
     )
     sector_to_pos = {}

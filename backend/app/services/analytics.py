@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from app.analytics.analytics_calc import (
     build_dynamics_positions,
-    build_only_buy_positions,
+    build_remaining_buy_lots_fifo,
     build_sector_positions,
     build_time_series,
     calc_cost_basis,
@@ -49,7 +49,7 @@ class AnalyticsService:
         trade_dtos = [TradeDTO.from_orm(trade) for trade in portfolio_trades]
 
         assets = await self.asset_repo.get_assets_by_ids(asset_ids)
-        portfolio_positions: list[PortfolioPositionPrepared] = build_only_buy_positions(
+        portfolio_positions: list[PortfolioPositionPrepared] = build_remaining_buy_lots_fifo(
             trades=trade_dtos, current_prices=asset_market_prices, assets=assets
         )
         cost_basis = calc_cost_basis(asset_positive_positons=portfolio_positions)
@@ -73,7 +73,7 @@ class AnalyticsService:
                 portfolio_positions,
                 key=lambda pos: pos.market_price / market_price * 100,
                 reverse=True,
-            )[:5]
+            )[:3]
         ]
 
         return PortfolioSnapshotResponse(
@@ -89,6 +89,10 @@ class AnalyticsService:
             positions_count=len(portfolio_positions),
             top_positions=top_positions,
         )
+
+    async def p_s_v2(self, portfolio_id: int):
+        portfolio = await self.portfolio_repo.get_by_id(portfolio_id)
+        if portfolio is None: raise HTTPException(404, 'SZ portfolio not found')
 
     async def portfolio_snapshot_for_user(
         self, portfolio_id: int, user_id: int
@@ -106,7 +110,7 @@ class AnalyticsService:
         trade_dtos = [TradeDTO.from_orm(trade) for trade in portfolio_trades]
 
         assets = await self.asset_repo.get_assets_by_ids(asset_ids)
-        portfolio_positions: list[PortfolioPositionPrepared] = build_only_buy_positions(
+        portfolio_positions: list[PortfolioPositionPrepared] = build_remaining_buy_lots_fifo(
             trades=trade_dtos, current_prices=asset_market_prices, assets=assets
         )
         cost_basis = calc_cost_basis(asset_positive_positons=portfolio_positions)
