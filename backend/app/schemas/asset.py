@@ -1,17 +1,6 @@
-from typing import Generic, TypeVar
-
 from app.schemas.common.enums import AssetSector, AssetType
 from app.schemas.common.types import AssetFullName, Ticker
-from pydantic import BaseModel, ConfigDict, Field, PositiveInt
-
-T = TypeVar('T')
-
-
-class Page(BaseModel, Generic[T]):
-    items: list[T]
-    total: int = Field(ge=0)
-    limit: int = Field(ge=1, le=200)
-    offset: int = Field(ge=0)
+from pydantic import BaseModel, ConfigDict, PositiveInt
 
 
 class APIModel(BaseModel):
