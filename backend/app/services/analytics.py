@@ -29,7 +29,6 @@ from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
-# убрать всю аналитику отсюлаёёда
 class AnalyticsService:
     def __init__(self, session: AsyncSession):
         self.session = session
@@ -131,7 +130,7 @@ class AnalyticsService:
                 portfolio_positions,
                 key=lambda pos: pos.market_price / market_price * 100,
                 reverse=True,
-            )[:5]
+            )[:3]
         ]
 
         return PortfolioSnapshotResponse(
