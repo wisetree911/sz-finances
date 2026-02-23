@@ -16,7 +16,7 @@ from app.models import RefreshSession
 from app.repositories import UserRepositoryPostgres
 from app.repositories.refresh_session import RefreshSessionRepositoryPostgres
 from app.schemas.auth import RefreshSessionCreate, RefreshToken, TokenPair
-from app.schemas.user import UserCreate, UserRegister, UserResponsePublic
+from app.schemas.user import UserCreate, UserRegister, UserResponse
 from fastapi import HTTPException, status
 from jose import JWTError
 
@@ -114,4 +114,4 @@ class AuthService:
                 role=payload.role,
             )
         )
-        return UserResponsePublic(name=user.name, email=user.email, role=user.role)
+        return UserResponse(name=user.name, email=user.email, role=user.role)

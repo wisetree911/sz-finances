@@ -1,6 +1,5 @@
-from app.schemas.common.types import PortfolioName
-
 from app.schemas.common.enums import Currency
+from app.schemas.common.types import PortfolioName
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 from pydantic.types import AwareDatetime, PositiveInt
 

@@ -1,12 +1,11 @@
 from app.schemas.common.enums import Role
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
-from pydantic.types import AwareDatetime
 
 
 class APIModel(BaseModel):
     model_config = ConfigDict(
-        from_attributes=True,
         extra='forbid',
+        from_attributes=True,
         str_strip_whitespace=True,
     )
 
@@ -14,7 +13,7 @@ class APIModel(BaseModel):
 class UserFields(APIModel):
     name: str
     email: EmailStr
-    role: Role = Field(default=Role.user)
+    role: Role = Field(...)
 
 
 class UserCreate(UserFields):
@@ -26,14 +25,8 @@ class UserUpdate(UserFields):
     email: EmailStr | None = None
 
 
-class UserResponsePublic(UserFields):
-    pass
-
-
-class UserResponseAdm(UserFields):
+class UserResponse(UserFields):
     id: int
-    hashed_password: str
-    created_at: AwareDatetime
 
 
 class UserRegister(APIModel):

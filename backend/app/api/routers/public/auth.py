@@ -2,7 +2,7 @@ from typing import Annotated
 
 from app.api.dependencies import get_auth_service
 from app.schemas.auth import RefreshToken, TokenPair
-from app.schemas.user import UserRegister, UserResponsePublic
+from app.schemas.user import UserRegister, UserResponse
 from app.services.auth import AuthService
 from fastapi import APIRouter, Depends, status
 from fastapi.security import OAuth2PasswordRequestForm
@@ -14,7 +14,7 @@ router = APIRouter(prefix='/auth', tags=['Auth'])
     '/register',
     status_code=status.HTTP_201_CREATED,
     summary='Регистрация пользователя',
-    response_model=UserResponsePublic,
+    response_model=UserResponse,
 )
 async def register(payload: UserRegister, service: AuthService = Depends(get_auth_service)):
     return await service.register(payload=payload)

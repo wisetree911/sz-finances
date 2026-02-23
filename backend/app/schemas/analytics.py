@@ -1,7 +1,8 @@
 from decimal import Decimal
-from app.schemas.common.types import Money, Percent
+
 from app.schemas.asset import AssetSector
 from app.schemas.common.enums import Currency
+from app.schemas.common.types import Money, Percent
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic.types import AwareDatetime, NonNegativeInt, PositiveInt
 
@@ -10,6 +11,7 @@ class APIModel(BaseModel):
     model_config = ConfigDict(
         extra='forbid',
         str_strip_whitespace=True,
+        from_attributes=True,
         json_encoders={Decimal: lambda v: str(v)},
     )
 

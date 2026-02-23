@@ -1,5 +1,6 @@
-from typing import Annotated
 from decimal import Decimal
+from typing import Annotated
+
 from pydantic import Field
 
 Money = Annotated[

@@ -1,6 +1,7 @@
 from decimal import Decimal
-from app.schemas.common.types import Money
+
 from app.schemas.common.enums import TradeDirection
+from app.schemas.common.types import Money
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 from pydantic.types import AwareDatetime, PositiveInt
 

@@ -1,6 +1,7 @@
 from typing import Generic, TypeVar
-from app.schemas.common.types import Ticker, AssetFullName
+
 from app.schemas.common.enums import AssetSector, AssetType
+from app.schemas.common.types import AssetFullName, Ticker
 from pydantic import BaseModel, ConfigDict, Field, PositiveInt
 
 T = TypeVar('T')
@@ -14,7 +15,10 @@ class Page(BaseModel, Generic[T]):
 
 
 class APIModel(BaseModel):
-    model_config = ConfigDict(from_attributes=True, extra='forbid')
+    model_config = ConfigDict(
+        extra='forbid',
+        from_attributes=True,
+    )
 
 
 class AssetFields(APIModel):

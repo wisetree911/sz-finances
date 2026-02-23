@@ -1,17 +1,17 @@
 from app.api.dependencies import get_user_service
 from app.core.security.dependencies import get_current_user
-from app.schemas.user import UserResponsePublic, UserUpdate
+from app.schemas.user import UserResponse, UserUpdate
 from app.services.users import UserService
 from fastapi import APIRouter, Depends, status
 
 router = APIRouter(prefix='/users', tags=['Users'])
 
 
-@router.get('/me', response_model=UserResponsePublic)
+@router.get('/me', response_model=UserResponse)
 async def get_user(
     current_user=Depends(get_current_user),
     service: UserService = Depends(get_user_service),
-) -> UserResponsePublic:
+) -> UserResponse:
     return await service.get_by_id(user_id=current_user.id)
 
 
@@ -24,10 +24,10 @@ async def delete_user(
     return None
 
 
-@router.patch('/me', response_model=UserResponsePublic)
+@router.patch('/me', response_model=UserResponse)
 async def update(
     payload: UserUpdate,
     current_user=Depends(get_current_user),
     service: UserService = Depends(get_user_service),
-) -> UserResponsePublic:
+) -> UserResponse:
     return await service.update(user_id=current_user.id, payload=payload)
