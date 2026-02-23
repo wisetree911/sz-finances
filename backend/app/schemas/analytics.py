@@ -2,6 +2,7 @@ from decimal import Decimal
 from enum import Enum
 from typing import Annotated
 
+from app.schemas.asset import AssetSector
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic.types import AwareDatetime, NonNegativeInt, PositiveInt
 
@@ -26,35 +27,99 @@ Money = Annotated[
 
 Percent = Annotated[
     Decimal,
-    Field(description='Percent value.', ge=-100, le=10_000),
+    Field(description='Percent value.', ge=-100),
 ]
 
 
 class TopPosition(APIModel):
-    asset_id: PositiveInt = Field(..., description='Asset ID in position.')
-    ticker: str = Field(..., description='Asset ticker, for example: GAZP.')
-    full_name: str = Field(..., description='Full name of asset in position.')
-    quantity: Decimal = Field(..., description='Quantity of asset in position.')
-    avg_buy_price: Money = Field(..., description='Average buy price of asset in position.')
-    asset_market_price: Money = Field(
-        ..., description='Current market price of 1 asset in position.'
+    asset_id: PositiveInt = Field(
+        ...,
+        description='Asset ID in position',
+        examples=[1],
     )
-    market_value: Money = Field(..., description='Current market price of all assets in position.')
-    unrealized_pnl: Decimal = Field(..., description='Unrealized PNL of portfolio position.')
-    unrealized_return_pct: Percent = Field(..., description='Profit of asset in percents.')
-    weight_pct: Percent = Field(..., description='Weight of asset in portfolio in percents.')
+    ticker: str = Field(
+        ...,
+        description='Asset ticker',
+        examples=['GAZP'],
+    )
+    full_name: str = Field(
+        ...,
+        description='Full name of asset in position',
+        examples=['Газпром'],
+    )
+    quantity: Decimal = Field(
+        ...,
+        description='Quantity of asset in position',
+        examples=['1.12', '2'],
+    )
+    avg_buy_price: Money = Field(
+        ...,
+        description='Average buy price of asset in position',
+        examples=['750.54'],
+    )
+    asset_market_price: Money = Field(
+        ...,
+        description='Current market price of 1 asset in position.',
+        examples=['435.54'],
+    )
+    market_value: Money = Field(
+        ...,
+        description='Current market price of all assets in position.',
+        examples=['1.12'],
+    )
+    unrealized_pnl: Decimal = Field(
+        ...,
+        description='Unrealized PNL of portfolio position.',
+        examples=['500.178'],
+    )
+    unrealized_return_pct: Percent = Field(
+        ...,
+        description='Profit of asset in percents.',
+        examples=['66.0'],
+    )
+    weight_pct: Percent = Field(
+        ...,
+        description='Weight of asset in portfolio in percents.',
+        examples=['36.12'],
+    )
 
 
 class PortfolioSnapshotResponse(APIModel):
-    portfolio_id: PositiveInt = Field(..., description='Portfolio ID.')
-    name: str = Field(..., description='Portfolio name.')
-    market_value: Money = Field(..., description='Total current value of portfolio.')
-    unrealized_pnl: Decimal = Field(..., description='Unrealized PNL of portfolio.')
-    unrealized_return_pct: Percent = Field(..., description='Unrelized return of portfolio.')
-    cost_basis: Money = Field(..., description='Value invested in portfolio initially.')
-    currency: Currency = Field(..., description='Currency of portfolio, for example: RUB.')
+    portfolio_id: PositiveInt = Field(
+        ...,
+        description='Portfolio ID.',
+        examples=[1],
+    )
+    name: str = Field(..., description='Portfolio name.', examples=['Main portfolio'])
+    market_value: Money = Field(
+        ...,
+        description='Total current value of portfolio',
+        examples=['20678.176'],
+    )
+    unrealized_pnl: Decimal = Field(
+        ...,
+        description='Unrealized PNL of portfolio',
+        examples=['6702.564'],
+    )
+    unrealized_return_pct: Percent = Field(
+        ...,
+        description='Unrealized return of portfolio',
+        examples=['23.0'],
+    )
+    cost_basis: Money = Field(
+        ...,
+        description='Value invested in portfolio initially',
+        examples=['16800.12'],
+    )
+    currency: Currency = Field(
+        ...,
+        description='Currency of portfolio',
+        examples=['RUB', 'USD'],
+    )
     positions_count: NonNegativeInt = Field(
-        ..., description='Number of unique assets in portfolio.'
+        ...,
+        description='Number of unique assets in portfolio',
+        examples=[14],
     )
     top_positions: list[TopPosition] = Field(
         default_factory=list,
@@ -78,9 +143,11 @@ class PortfolioSnapshotResponse(APIModel):
 
 
 class SectorDistributionPosition(APIModel):
-    sector: str = Field(..., description='Sector name, for example "retail".')
+    sector: AssetSector = Field(..., description='Sector name"')
     market_value: Money = Field(
-        ..., description='Current value of portfolio assets from stated sector.'
+        ...,
+        description='Current value of portfolio assets from stated sector.',
+        examples=['20678.176'],
     )
     weight_percent: Percent = Field(
         ...,
@@ -88,16 +155,30 @@ class SectorDistributionPosition(APIModel):
             'Current percent value of portfolio assets from stated sector '
             'to whole current portfolio value.'
         ),
+        examples=['23.5'],
     )
 
 
 class SectorDistributionResponse(APIModel):
-    portfolio_id: PositiveInt = Field(..., description='Portfolio ID.')
-    name: str = Field(..., description='Portfolio name.')
-    market_value: Money = Field(..., description='Total market value of portfolio.')
-    currency: Currency = Field(..., description='Currency of portfolio, for example: RUB.')
+    portfolio_id: PositiveInt = Field(
+        ...,
+        description='Portfolio ID',
+        examples=[1],
+    )
+    name: str = Field(..., description='Portfolio name', examples=['Main portfolio'])
+    market_value: Money = Field(
+        ...,
+        description='Total market value of portfolio',
+        examples=['20678.176'],
+    )
+    currency: Currency = Field(
+        ...,
+        description='Currency of portfolio',
+        examples=['RUB', 'USD'],
+    )
     sectors: list[SectorDistributionPosition] = Field(
-        default_factory=list, description='Portfolio grouped and distributed by sectors.'
+        default_factory=list,
+        description='Portfolio grouped and distributed by sectors',
     )
 
     @classmethod
@@ -105,7 +186,7 @@ class SectorDistributionResponse(APIModel):
         return cls(
             portfolio_id=portfolio.id,
             name=portfolio.name,
-            market_value=0,
+            market_value=Decimal(0),
             currency=portfolio.currency,
             sectors=[],
         )
