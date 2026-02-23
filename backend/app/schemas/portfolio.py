@@ -57,3 +57,7 @@ class PortfolioResponse(PortfolioFields):
     id: PositiveInt
     user_id: PositiveInt
     created_at: AwareDatetime
+
+
+class PortfolioListResponse(APIModel):
+    portfolios: list[PortfolioResponse]

@@ -23,7 +23,7 @@ async def get_trades(
     return await service.get_all_trades()
 
 
-@router.post('/')
+@router.post('/', status_code=status.HTTP_201_CREATED)
 async def create_trade(
     payload: TradeCreate, service: TradeService = Depends(get_trade_service)
 ) -> TradeResponse:

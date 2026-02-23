@@ -2,6 +2,7 @@ from app.api.dependencies import get_portfolio_service
 from app.core.security.dependencies import require_admin
 from app.schemas.portfolio import (
     PortfolioCreateAdm,
+    PortfolioListResponse,
     PortfolioResponse,
     PortfolioUpdate,
 )
@@ -22,15 +23,16 @@ async def get_by_id(
     return await service.get_portfolio_by_portfolio_id(portfolio_id=portfolio_id)
 
 
-@router.get('/')
+@router.get('/', response_model=PortfolioListResponse)
 async def get_all(
     service: PortfolioService = Depends(get_portfolio_service),
-) -> list[PortfolioResponse]:
-    return await service.get_all_portfolios()
+) -> PortfolioListResponse:
+    res = await service.get_all_portfolios()
+    return PortfolioListResponse(portfolios=res)
 
 
-@router.post('/')
-async def create(
+@router.post('/', status_code=status.HTTP_201_CREATED, response_model=PortfolioResponse)
+async def create(  # обработку если нет юзера
     payload: PortfolioCreateAdm,
     service: PortfolioService = Depends(get_portfolio_service),
 ) -> PortfolioResponse:
@@ -54,8 +56,9 @@ async def update_portfolio(
     return await service.update(portfolio_id=portfolio_id, payload=payload)
 
 
-@router.get('/user/{user_id}')  # add pydantic
+@router.get('/user/{user_id}', response_model=PortfolioListResponse)  # add pydantic
 async def get_user_portfolios(
     user_id: int, service: PortfolioService = Depends(get_portfolio_service)
 ):
-    return await service.get_user_portfolios(user_id=user_id)
+    res = await service.get_user_portfolios(user_id=user_id)
+    return PortfolioListResponse(portfolios=res)

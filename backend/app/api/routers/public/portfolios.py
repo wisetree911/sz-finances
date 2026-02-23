@@ -53,6 +53,7 @@ async def delete_by_id(
 @router.post(
     '/',
     response_model=PortfolioResponse,
+    status_code=status.HTTP_201_CREATED,
     summary='Создать пустой портфель.',
 )  # todo
 async def create_portfolio_for_user(
