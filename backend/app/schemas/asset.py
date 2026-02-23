@@ -2,7 +2,6 @@ from enum import Enum
 from typing import Annotated, Generic, TypeVar
 
 from pydantic import BaseModel, ConfigDict, Field, PositiveInt
-from pydantic.types import AwareDatetime
 
 T = TypeVar('T')
 
@@ -71,23 +70,15 @@ class AssetFields(APIModel):
     sector: AssetSectorField
 
 
-class AssetResponsePublic(AssetFields):
+class AssetResponse(AssetFields):
     id: PositiveInt
-    model_config = ConfigDict(
-        from_attributes=True,
-    )
-
-
-class AssetResponseAdm(AssetFields):
-    id: PositiveInt
-    created_at: AwareDatetime
 
 
 class AssetCreateAdm(AssetFields):
     pass
 
 
-class AssetUpdateAdm(AssetFields):
+class AssetUpdate(AssetFields):
     ticker: Ticker | None = None
     full_name: AssetFullName | None = None
     type: AssetTypeField | None = None

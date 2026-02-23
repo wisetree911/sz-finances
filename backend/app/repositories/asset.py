@@ -1,7 +1,7 @@
 from collections.abc import Sequence
 
 from app.models.asset import Asset
-from app.schemas.asset import AssetCreateAdm, AssetUpdateAdm
+from app.schemas.asset import AssetCreateAdm, AssetUpdate
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -27,7 +27,7 @@ class AssetRepositoryPostgres:
         result = await self.session.execute(query)
         return result.scalar_one_or_none()
 
-    async def update(self, asset: Asset, obj_in: AssetUpdateAdm):
+    async def update(self, asset: Asset, obj_in: AssetUpdate):
         update_data = obj_in.model_dump(exclude_unset=True)
         for field, value in update_data.items():
             setattr(asset, field, value)

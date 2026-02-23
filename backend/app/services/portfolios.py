@@ -56,9 +56,7 @@ class PortfolioService:
             raise HTTPException(status_code=404, detail='Portfolio not found')
         await self.repo.delete(portfolio=portfolio)
 
-    async def update_for_user(
-        self, portfolio_id: int, user_id: int, payload: PortfolioUpdate
-    ):
+    async def update_for_user(self, portfolio_id: int, user_id: int, payload: PortfolioUpdate):
         portfolio = await self.repo.get_by_id(portfolio_id=portfolio_id)
         if not portfolio:
             raise HTTPException(404, 'SZ portfolio not found')
