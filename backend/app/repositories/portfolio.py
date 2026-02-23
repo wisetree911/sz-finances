@@ -1,8 +1,8 @@
 from app.models import Portfolio
 from app.schemas.portfolio import (
     PortfolioCreateAdm,
-    PortfolioCreatePublic,
-    PortfolioUpdateAdm,
+    PortfolioCreate,
+    PortfolioUpdate,
 )
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -29,7 +29,7 @@ class PortfolioRepositoryPostgres:
         result = await self.session.execute(query)
         return result.scalar_one_or_none()
 
-    async def update(self, portfolio: Portfolio, payload: PortfolioUpdateAdm):
+    async def update(self, portfolio: Portfolio, payload: PortfolioUpdate):
         update_data = payload.model_dump(exclude_unset=True)
         for field, value in update_data.items():
             setattr(portfolio, field, value)
@@ -47,7 +47,7 @@ class PortfolioRepositoryPostgres:
         portfolios = result.scalars().all()
         return portfolios
 
-    async def create_for_user(self, payload: PortfolioCreatePublic, user_id: int):
+    async def create_for_user(self, payload: PortfolioCreate, user_id: int):
         obj = Portfolio(
             user_id=user_id,
             name=payload.name,

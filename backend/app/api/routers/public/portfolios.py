@@ -1,9 +1,9 @@
 from app.api.dependencies import get_portfolio_service
 from app.core.security.dependencies import get_current_user
 from app.schemas.portfolio import (
-    PortfolioCreatePublic,
-    PortfolioResponseAdm,
-    PortfolioUpdatePublic,
+    PortfolioCreate,
+    PortfolioResponse,
+    PortfolioUpdate,
 )
 from app.services.portfolios import PortfolioService
 from fastapi import APIRouter, Depends, status
@@ -13,26 +13,26 @@ router = APIRouter(prefix='/portfolios', tags=['Portfolios'])
 
 @router.get(
     '/',
-    response_model=list[PortfolioResponseAdm],
+    response_model=list[PortfolioResponse],
     summary='Список всех портфелей пользователя.',
 )  # todo
 async def get_portfolios(
     current_user=Depends(get_current_user),
     service: PortfolioService = Depends(get_portfolio_service),
-) -> list[PortfolioResponseAdm]:
+) -> list[PortfolioResponse]:
     return await service.get_user_portfolios(user_id=current_user.id)
 
 
 @router.get(
     '/{portfolio_id}',
-    response_model=PortfolioResponseAdm,
+    response_model=PortfolioResponse,
     summary='Портфель по id.',
 )
 async def get_by_portfolio_id(
     portfolio_id: int,
     current_user=Depends(get_current_user),
     service: PortfolioService = Depends(get_portfolio_service),
-) -> PortfolioResponseAdm:
+) -> PortfolioResponse:
     return await service.get_portfolio_for_user(portfolio_id=portfolio_id, user_id=current_user.id)
 
 
@@ -52,28 +52,28 @@ async def delete_by_id(
 
 @router.post(
     '/',
-    response_model=PortfolioResponseAdm,
+    response_model=PortfolioResponse,
     summary='Создать пустой портфель.',
 )  # todo
 async def create_portfolio_for_user(
-    payload: PortfolioCreatePublic,
+    payload: PortfolioCreate,
     current_user=Depends(get_current_user),
     service: PortfolioService = Depends(get_portfolio_service),
-) -> PortfolioResponseAdm:
+) -> PortfolioResponse:
     return await service.create_portfolio_for_user(payload=payload, user_id=current_user.id)
 
 
 @router.patch(
     '/{portfolio_id}',
-    response_model=PortfolioResponseAdm,
+    response_model=PortfolioResponse,
     summary='Обновить информацию о портфеле.',
 )
 async def update_portfolio_for_user(
     portfolio_id: int,
-    payload: PortfolioUpdatePublic,
+    payload: PortfolioUpdate,
     current_user=Depends(get_current_user),
     service: PortfolioService = Depends(get_portfolio_service),
-) -> PortfolioResponseAdm:
+) -> PortfolioResponse:
     return await service.update_for_user(
         portfolio_id=portfolio_id, user_id=current_user.id, payload=payload
     )

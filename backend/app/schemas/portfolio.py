@@ -34,15 +34,15 @@ class PortfolioFields(APIModel):
     currency: Currency = Field(..., description='Portfolio currency')
 
 
-class PortfolioCreatePublic(PortfolioFields):
+class PortfolioCreate(PortfolioFields):
     pass
 
 
-class PortfolioCreateAdm(PortfolioCreatePublic):
+class PortfolioCreateAdm(PortfolioCreate):
     user_id: PositiveInt
 
 
-class PortfolioUpdatePublic(APIModel):
+class PortfolioUpdate(APIModel):
     name: PortfolioName | None = None
     currency: Currency | None = None
 
@@ -53,19 +53,7 @@ class PortfolioUpdatePublic(APIModel):
         return self
 
 
-class PortfolioUpdateAdm(APIModel):
-    user_id: PositiveInt | None = None
-    name: PortfolioName | None = None
-    currency: Currency | None = None
-
-    @model_validator(mode='after')
-    def at_least_one_field(self):
-        if not self.model_dump(exclude_none=True):
-            raise ValueError('At least one field must be provided')
-        return self
-
-
-class PortfolioResponseAdm(PortfolioFields):
+class PortfolioResponse(PortfolioFields):
     id: PositiveInt
     user_id: PositiveInt
     created_at: AwareDatetime

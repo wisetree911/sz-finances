@@ -1,5 +1,5 @@
 from app.contracts.repos import PortfolioRepository
-from app.schemas.portfolio import PortfolioCreatePublic, PortfolioUpdatePublic
+from app.schemas.portfolio import PortfolioCreate, PortfolioUpdate
 from fastapi import HTTPException
 
 
@@ -16,7 +16,7 @@ class PortfolioService:
             raise HTTPException(404, 'SZ portfolio not found')
         return portfolio
 
-    async def create_portfolio(self, payload: PortfolioCreatePublic):
+    async def create_portfolio(self, payload: PortfolioCreate):
         return await self.repo.create(payload=payload)
 
     async def delete_portfolio_by_portfolio_id(self, portfolio_id: int):
@@ -26,7 +26,7 @@ class PortfolioService:
 
         await self.repo.delete(portfolio=portfolio)
 
-    async def update(self, portfolio_id: int, payload: PortfolioUpdatePublic):
+    async def update(self, portfolio_id: int, payload: PortfolioUpdate):
         portfolio = await self.repo.get_by_id(portfolio_id=portfolio_id)
         if portfolio is None:
             raise HTTPException(404, 'SZ portfolio not found')
@@ -45,7 +45,7 @@ class PortfolioService:
             raise HTTPException(status_code=404, detail='Portfolio not found')
         return portfolio
 
-    async def create_portfolio_for_user(self, user_id: int, payload: PortfolioCreatePublic):
+    async def create_portfolio_for_user(self, user_id: int, payload: PortfolioCreate):
         return await self.repo.create_for_user(payload=payload, user_id=user_id)
 
     async def delete_portfolio_for_user(self, portfolio_id: int, user_id: int):
@@ -57,7 +57,7 @@ class PortfolioService:
         await self.repo.delete(portfolio=portfolio)
 
     async def update_for_user(
-        self, portfolio_id: int, user_id: int, payload: PortfolioUpdatePublic
+        self, portfolio_id: int, user_id: int, payload: PortfolioUpdate
     ):
         portfolio = await self.repo.get_by_id(portfolio_id=portfolio_id)
         if not portfolio:

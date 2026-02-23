@@ -1,8 +1,8 @@
 from app.api.dependencies import get_portfolio_service
 from app.schemas.portfolio import (
     PortfolioCreateAdm,
-    PortfolioResponseAdm,
-    PortfolioUpdateAdm,
+    PortfolioResponse,
+    PortfolioUpdate,
 )
 from app.services.portfolios import PortfolioService
 from fastapi import APIRouter, Depends, status
@@ -13,14 +13,14 @@ router = APIRouter(prefix='/portfolios', tags=['Portfolios'])
 @router.get('/{portfolio_id}')
 async def get_by_id(
     portfolio_id: int, service: PortfolioService = Depends(get_portfolio_service)
-) -> PortfolioResponseAdm:
+) -> PortfolioResponse:
     return await service.get_portfolio_by_portfolio_id(portfolio_id=portfolio_id)
 
 
 @router.get('/')
 async def get_all(
     service: PortfolioService = Depends(get_portfolio_service),
-) -> list[PortfolioResponseAdm]:
+) -> list[PortfolioResponse]:
     return await service.get_all_portfolios()
 
 
@@ -28,7 +28,7 @@ async def get_all(
 async def create(
     payload: PortfolioCreateAdm,
     service: PortfolioService = Depends(get_portfolio_service),
-) -> PortfolioResponseAdm:
+) -> PortfolioResponse:
     return await service.create_portfolio(payload)
 
 
@@ -43,9 +43,9 @@ async def delete_by_id(
 @router.patch('/{portfolio_id}')
 async def update_portfolio(
     portfolio_id: int,
-    payload: PortfolioUpdateAdm,
+    payload: PortfolioUpdate,
     service: PortfolioService = Depends(get_portfolio_service),
-) -> PortfolioResponseAdm:
+) -> PortfolioResponse:
     return await service.update(portfolio_id=portfolio_id, payload=payload)
 
 
