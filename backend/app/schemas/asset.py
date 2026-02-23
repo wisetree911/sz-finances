@@ -1,6 +1,6 @@
-from enum import Enum
 from typing import Annotated, Generic, TypeVar
 
+from app.schemas.common.enums import AssetSector, AssetType
 from pydantic import BaseModel, ConfigDict, Field, PositiveInt
 
 T = TypeVar('T')
@@ -13,27 +13,7 @@ class Page(BaseModel, Generic[T]):
     offset: int = Field(ge=0)
 
 
-class AssetType(str, Enum):
-    stock = 'stock'
-    bond = 'bond'
-    fund = 'fund'
-
-
 AssetTypeField = Annotated[AssetType, Field(description='Вид актива')]
-
-
-class AssetSector(str, Enum):
-    oil_gas = 'oil_gas'
-    utilities = 'utilities'
-    telecom = 'telecom'
-    metals_mining = 'metals_mining'
-    financials = 'financials'
-    consumer = 'consumer'
-    chemicals = 'chemicals'
-    it = 'it'
-    real_estate = 'real_estate'
-    transport = 'transport'
-
 
 AssetSectorField = Annotated[AssetSector, Field(description='Сектор, к которому относится акция')]
 

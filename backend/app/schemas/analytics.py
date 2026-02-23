@@ -1,8 +1,8 @@
 from decimal import Decimal
-from enum import Enum
 from typing import Annotated
 
 from app.schemas.asset import AssetSector
+from app.schemas.common.enums import Currency
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic.types import AwareDatetime, NonNegativeInt, PositiveInt
 
@@ -13,11 +13,6 @@ class APIModel(BaseModel):
         str_strip_whitespace=True,
         json_encoders={Decimal: lambda v: str(v)},
     )
-
-
-class Currency(str, Enum):
-    RUB = 'RUB'
-    USD = 'USD'
 
 
 Money = Annotated[

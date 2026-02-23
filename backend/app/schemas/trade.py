@@ -1,7 +1,7 @@
 from decimal import Decimal
-from enum import Enum
 from typing import Annotated
 
+from app.schemas.common.enums import TradeDirection
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 from pydantic.types import AwareDatetime, PositiveInt
 
@@ -13,11 +13,6 @@ class APIModel(BaseModel):
         from_attributes=True,
         json_encoders={Decimal: lambda v: str(v)},
     )
-
-
-class TradeDirection(str, Enum):
-    buy = 'buy'
-    sell = 'sell'
 
 
 Money = Annotated[

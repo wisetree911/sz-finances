@@ -1,6 +1,6 @@
-from enum import Enum
 from typing import Annotated
 
+from app.schemas.common.enums import Currency
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 from pydantic.types import AwareDatetime, PositiveInt
 
@@ -11,11 +11,6 @@ class APIModel(BaseModel):
         from_attributes=True,
         str_strip_whitespace=True,
     )
-
-
-class Currency(str, Enum):
-    RUB = 'RUB'
-    USD = 'USD'
 
 
 PortfolioName = Annotated[
