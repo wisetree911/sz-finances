@@ -1,4 +1,4 @@
-from app.schemas.user import UserCreateAdm, UserUpdateAdm
+from app.schemas.user import UserCreate, UserUpdate
 from fastapi import HTTPException
 
 
@@ -19,7 +19,7 @@ class UserService:
         user = await self.repo.get_by_email(email=email)
         return user
 
-    async def create(self, obj_in: UserCreateAdm):
+    async def create(self, obj_in: UserCreate):
         return await self.repo.create(obj_in=obj_in)
 
     async def delete_user(self, user_id: int):
@@ -28,7 +28,7 @@ class UserService:
             raise HTTPException(404, 'SZ user not found')
         await self.repo.delete(user=user)
 
-    async def update(self, user_id: int, payload: UserUpdateAdm):
+    async def update(self, user_id: int, payload: UserUpdate):
         user = await self.repo.get_by_id(user_id=user_id)
         if user is None:
             raise HTTPException(404, 'SZ user not found')

@@ -16,7 +16,7 @@ from app.models import RefreshSession
 from app.repositories import UserRepositoryPostgres
 from app.repositories.refresh_session import RefreshSessionRepositoryPostgres
 from app.schemas.auth import RefreshSessionCreate, RefreshToken, TokenPair
-from app.schemas.user import UserCreateAdm, UserRegister, UserResponsePublic
+from app.schemas.user import UserCreate, UserRegister, UserResponsePublic
 from fastapi import HTTPException, status
 from jose import JWTError
 
@@ -107,7 +107,7 @@ class AuthService:
         if existing:
             raise HTTPException(status_code=409, detail='User already exists')
         user = await self.user_repo.create(
-            UserCreateAdm(
+            UserCreate(
                 name=payload.name,
                 email=payload.email,
                 hashed_password=hash_password(payload.password),

@@ -1,6 +1,5 @@
 from decimal import Decimal
-from typing import Annotated
-
+from app.schemas.common.types import Money
 from app.schemas.common.enums import TradeDirection
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 from pydantic.types import AwareDatetime, PositiveInt
@@ -13,12 +12,6 @@ class APIModel(BaseModel):
         from_attributes=True,
         json_encoders={Decimal: lambda v: str(v)},
     )
-
-
-Money = Annotated[
-    Decimal,
-    Field(description='Money value', ge=0),
-]
 
 
 class TradeBase(APIModel):

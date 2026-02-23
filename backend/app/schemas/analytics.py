@@ -1,6 +1,5 @@
 from decimal import Decimal
-from typing import Annotated
-
+from app.schemas.common.types import Money, Percent
 from app.schemas.asset import AssetSector
 from app.schemas.common.enums import Currency
 from pydantic import BaseModel, ConfigDict, Field
@@ -13,17 +12,6 @@ class APIModel(BaseModel):
         str_strip_whitespace=True,
         json_encoders={Decimal: lambda v: str(v)},
     )
-
-
-Money = Annotated[
-    Decimal,
-    Field(description='Money value.', ge=0),
-]
-
-Percent = Annotated[
-    Decimal,
-    Field(description='Percent value.', ge=-100),
-]
 
 
 class TopPosition(APIModel):

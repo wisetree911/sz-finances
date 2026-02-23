@@ -1,4 +1,4 @@
-from typing import Annotated
+from app.schemas.common.types import PortfolioName
 
 from app.schemas.common.enums import Currency
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -11,17 +11,6 @@ class APIModel(BaseModel):
         from_attributes=True,
         str_strip_whitespace=True,
     )
-
-
-PortfolioName = Annotated[
-    str,
-    Field(
-        description='Portfolio name',
-        min_length=1,
-        max_length=64,
-        examples=['Main portfolio'],
-    ),
-]
 
 
 class PortfolioFields(APIModel):
