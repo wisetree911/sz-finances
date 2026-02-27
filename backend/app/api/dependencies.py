@@ -1,6 +1,7 @@
 from app.contracts.repos import PortfolioRepository, TradeRepository, UserRepository
 from app.infrastructure.db.database import get_session
 from app.repositories import (
+    AssetRepositoryPostgres,
     PortfolioRepositoryPostgres,
     TradeRepositoryPostgres,
     UserRepositoryPostgres,
@@ -42,11 +43,17 @@ async def get_user_service(repo: UserRepository = Depends(get_user_repo)) -> Use
     return UserService(repo=repo)
 
 
-def get_asset_service(session: AsyncSession = Depends(get_session)) -> AssetService:
-    return AssetService(session=session)
+async def get_asset_repo(session: AsyncSession = Depends(get_session)) -> AssetRepositoryPostgres:
+    return AssetRepositoryPostgres(session=session)
 
 
-def get_auth_service(session: AsyncSession = Depends(get_session)) -> AuthService:
+async def get_asset_service(
+    repo: AssetRepositoryPostgres = Depends(get_asset_repo),
+) -> AssetService:
+    return AssetService(repo=repo)
+
+
+async def get_auth_service(session: AsyncSession = Depends(get_session)) -> AuthService:
     return AuthService(session=session)
 
 
