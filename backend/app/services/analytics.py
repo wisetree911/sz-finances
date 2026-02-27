@@ -1,54 +1,38 @@
-from datetime import datetime, timedelta
-
 from app.analytics.analytics_calc import (
-    build_dynamics_positions,
     build_remaining_buy_lots_fifo,
     build_sector_positions,
-    build_time_series,
     calc_cost_basis,
     calc_market_value,
     calc_unrealized_pnl,
     calc_unrealized_return_pct,
 )
 from app.analytics.models import PortfolioPositionPrepared, SectorPosition, TradeDTO
-from app.repositories import (
-    AssetRepositoryPostgres,
-    PortfolioRepositoryPostgres,
-    TradeRepositoryPostgres,
-)
-from app.repositories.asset_price import AssetPriceRepositoryPostgres
+from app.repositories.analytics import AnalyticsRepository
 from app.schemas.analytics import (
-    PortfolioDynamicsResponse,
-    PortfolioPrice,
     PortfolioSnapshotResponse,
     SectorDistributionPosition,
     SectorDistributionResponse,
     TopPosition,
 )
 from fastapi import HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class AnalyticsService:
-    def __init__(self, session: AsyncSession):
-        self.session = session
-        self.asset_price_repo = AssetPriceRepositoryPostgres(session=session)
-        self.portfolio_repo = PortfolioRepositoryPostgres(session=session)
-        self.asset_repo = AssetRepositoryPostgres(session=session)
-        self.trade_repo = TradeRepositoryPostgres(session=session)
+    def __init__(self, repo: AnalyticsRepository):
+        self.an_repo = repo
 
     async def portfolio_snapshot(self, portfolio_id: int) -> PortfolioSnapshotResponse:
-        portfolio = await self.portfolio_repo.get_by_id(portfolio_id)
+        portfolio = await self.an_repo.get_portfolio(portfolio_id)
         if portfolio is None:
             raise HTTPException(404, 'SZ portfolio not found')
-        portfolio_trades = await self.trade_repo.get_trades_by_portfolio_id(portfolio_id)
+        portfolio_trades = await self.an_repo.get_trades_by_portfolio_id(portfolio_id)
         if not portfolio_trades:
             return PortfolioSnapshotResponse.empty(portfolio)
         asset_ids = {trade.asset_id for trade in portfolio_trades}
-        asset_market_prices = await self.asset_price_repo.get_prices_dict_by_ids(asset_ids)
+        asset_market_prices = await self.an_repo.get_prices_dict_by_ids(asset_ids)
         trade_dtos = [TradeDTO.from_orm(trade) for trade in portfolio_trades]
 
-        assets = await self.asset_repo.get_assets_by_ids(asset_ids)
+        assets = await self.an_repo.get_assets_by_ids(asset_ids)
         portfolio_positions: list[PortfolioPositionPrepared] = build_remaining_buy_lots_fifo(
             trades=trade_dtos, current_prices=asset_market_prices, assets=assets
         )
@@ -90,26 +74,22 @@ class AnalyticsService:
             top_positions=top_positions,
         )
 
-    async def p_s_v2(self, portfolio_id: int):
-        portfolio = await self.portfolio_repo.get_by_id(portfolio_id)
-        if portfolio is None: raise HTTPException(404, 'SZ portfolio not found')
-
     async def portfolio_snapshot_for_user(
         self, portfolio_id: int, user_id: int
     ) -> PortfolioSnapshotResponse:
-        portfolio = await self.portfolio_repo.get_by_id(portfolio_id)
+        portfolio = await self.an_repo.get_portfolio(portfolio_id)
         if portfolio is None:
             raise HTTPException(404, 'SZ portfolio not found')
         if portfolio.user_id != user_id:
             raise HTTPException(404, 'SZ portfolio not found')
-        portfolio_trades = await self.trade_repo.get_trades_by_portfolio_id(portfolio_id)
+        portfolio_trades = await self.an_repo.get_trades_by_portfolio_id(portfolio_id)
         if not portfolio_trades:
             return PortfolioSnapshotResponse.empty(portfolio)
         asset_ids = {trade.asset_id for trade in portfolio_trades}
-        asset_market_prices = await self.asset_price_repo.get_prices_dict_by_ids(asset_ids)
+        asset_market_prices = await self.an_repo.get_prices_dict_by_ids(asset_ids)
         trade_dtos = [TradeDTO.from_orm(trade) for trade in portfolio_trades]
 
-        assets = await self.asset_repo.get_assets_by_ids(asset_ids)
+        assets = await self.an_repo.get_assets_by_ids(asset_ids)
         portfolio_positions: list[PortfolioPositionPrepared] = build_remaining_buy_lots_fifo(
             trades=trade_dtos, current_prices=asset_market_prices, assets=assets
         )
@@ -152,15 +132,15 @@ class AnalyticsService:
         )
 
     async def sector_distribution(self, portfolio_id: int) -> SectorDistributionResponse:
-        portfolio = await self.portfolio_repo.get_by_id(portfolio_id)
+        portfolio = await self.an_repo.get_portfolio(portfolio_id)
         if portfolio is None:
             raise HTTPException(404, 'SZ portfolio not found')
-        portfolio_trades = await self.trade_repo.get_trades_by_portfolio_id(portfolio_id)
+        portfolio_trades = await self.an_repo.get_trades_by_portfolio_id(portfolio_id)
         if not portfolio_trades:
             return SectorDistributionResponse.empty(portfolio)
         asset_ids = {trade.asset_id for trade in portfolio_trades}
-        market_prices = await self.asset_price_repo.get_prices_dict_by_ids(asset_ids)
-        assets = await self.asset_repo.get_assets_by_ids(asset_ids)
+        market_prices = await self.an_repo.get_prices_dict_by_ids(asset_ids)
+        assets = await self.an_repo.get_assets_by_ids(asset_ids)
         trade_dtos = [TradeDTO.from_orm(trade) for trade in portfolio_trades]
         sector_positions: list[SectorPosition] = build_sector_positions(
             trades=trade_dtos, current_prices=market_prices, assets=assets
@@ -187,17 +167,17 @@ class AnalyticsService:
     async def sector_distribution_for_user(
         self, portfolio_id: int, user_id: int
     ) -> SectorDistributionResponse:
-        portfolio = await self.portfolio_repo.get_by_id(portfolio_id)
+        portfolio = await self.an_repo.get_portfolio(portfolio_id)
         if portfolio is None:
             raise HTTPException(404, 'SZ portfolio not found')
         if portfolio.user_id != user_id:
             raise HTTPException(404, 'SZ portfolio not found')
-        portfolio_trades = await self.trade_repo.get_trades_by_portfolio_id(portfolio_id)
+        portfolio_trades = await self.an_repo.get_trades_by_portfolio_id(portfolio_id)
         if not portfolio_trades:
             return SectorDistributionResponse.empty(portfolio)
         asset_ids = {trade.asset_id for trade in portfolio_trades}
-        market_prices = await self.asset_price_repo.get_prices_dict_by_ids(asset_ids)
-        assets = await self.asset_repo.get_assets_by_ids(asset_ids)
+        market_prices = await self.an_repo.get_prices_dict_by_ids(asset_ids)
+        assets = await self.an_repo.get_assets_by_ids(asset_ids)
         trade_dtos = [TradeDTO.from_orm(trade) for trade in portfolio_trades]
         sector_positions: list[SectorPosition] = build_sector_positions(
             trades=trade_dtos, current_prices=market_prices, assets=assets
@@ -221,54 +201,54 @@ class AnalyticsService:
             sectors=secs,
         )
 
-    async def portfolio_dynamics_for_24h(self, portfolio_id: int) -> PortfolioDynamicsResponse:
-        portfolio = await self.portfolio_repo.get_by_id(portfolio_id)
-        portfolio_trades = await self.trade_repo.get_trades_by_portfolio_id(portfolio_id)
-        dynamic_positions = build_dynamics_positions(trades=portfolio_trades)
-        asset_ids = [pos.asset_id for pos in dynamic_positions]
-        timestamp_now = datetime.utcnow()
-        asset_prices_history = await self.asset_price_repo.get_prices_since(
-            ids=asset_ids, since=timestamp_now - timedelta(days=1)
-        )
+    # async def portfolio_dynamics_for_24h(self, portfolio_id: int) -> PortfolioDynamicsResponse:
+    #     portfolio = await self.an_repo.get_portfolio(portfolio_id)
+    #     portfolio_trades = await self.an_repo.get_trades_by_portfolio_id(portfolio_id)
+    #     dynamic_positions = build_dynamics_positions(trades=portfolio_trades)
+    #     asset_ids = [pos.asset_id for pos in dynamic_positions]
+    #     timestamp_now = datetime.utcnow()
+    #     asset_prices_history = await self.asset_price_repo.get_prices_since(
+    #         ids=asset_ids, since=timestamp_now - timedelta(days=1)
+    #     )
+    #
+    #     time_series = build_time_series(
+    #         timestamp_now=timestamp_now,
+    #         asset_prices=asset_prices_history,
+    #         dynamic_positions=dynamic_positions,
+    #     )
+    #     prices = [
+    #         PortfolioPrice(timestamp=serie.timestamp, total_value=serie.price)
+    #         for serie in time_series
+    #     ]
+    #     return PortfolioDynamicsResponse(
+    #         portfolio_id=portfolio.id, name=portfolio.name, data=prices
+    #     )
 
-        time_series = build_time_series(
-            timestamp_now=timestamp_now,
-            asset_prices=asset_prices_history,
-            dynamic_positions=dynamic_positions,
-        )
-        prices = [
-            PortfolioPrice(timestamp=serie.timestamp, total_value=serie.price)
-            for serie in time_series
-        ]
-        return PortfolioDynamicsResponse(
-            portfolio_id=portfolio.id, name=portfolio.name, data=prices
-        )
-
-    async def portfolio_dynamics_for_24h_for_user(
-        self, portfolio_id: int, user_id: int
-    ) -> PortfolioDynamicsResponse:
-        portfolio = await self.portfolio_repo.get_by_id(portfolio_id)
-        if portfolio is None:
-            raise HTTPException(404, 'SZ portfolio not found')
-        if portfolio.user_id != user_id:
-            raise HTTPException(404, 'SZ portfolio not found')
-        portfolio_trades = await self.trade_repo.get_trades_by_portfolio_id(portfolio_id)
-        dynamic_positions = build_dynamics_positions(trades=portfolio_trades)
-        asset_ids = [pos.asset_id for pos in dynamic_positions]
-        timestamp_now = datetime.utcnow()
-        asset_prices_history = await self.asset_price_repo.get_prices_since(
-            ids=asset_ids, since=timestamp_now - timedelta(days=1)
-        )
-
-        time_series = build_time_series(
-            timestamp_now=timestamp_now,
-            asset_prices=asset_prices_history,
-            dynamic_positions=dynamic_positions,
-        )
-        prices = [
-            PortfolioPrice(timestamp=serie.timestamp, total_value=serie.price)
-            for serie in time_series
-        ]
-        return PortfolioDynamicsResponse(
-            portfolio_id=portfolio.id, name=portfolio.name, data=prices
-        )
+    # async def portfolio_dynamics_for_24h_for_user(
+    #     self, portfolio_id: int, user_id: int
+    # ) -> PortfolioDynamicsResponse:
+    #     portfolio = await self.portfolio_repo.get_by_id(portfolio_id)
+    #     if portfolio is None:
+    #         raise HTTPException(404, 'SZ portfolio not found')
+    #     if portfolio.user_id != user_id:
+    #         raise HTTPException(404, 'SZ portfolio not found')
+    #     portfolio_trades = await self.trade_repo.get_trades_by_portfolio_id(portfolio_id)
+    #     dynamic_positions = build_dynamics_positions(trades=portfolio_trades)
+    #     asset_ids = [pos.asset_id for pos in dynamic_positions]
+    #     timestamp_now = datetime.utcnow()
+    #     asset_prices_history = await self.asset_price_repo.get_prices_since(
+    #         ids=asset_ids, since=timestamp_now - timedelta(days=1)
+    #     )
+    #
+    #     time_series = build_time_series(
+    #         timestamp_now=timestamp_now,
+    #         asset_prices=asset_prices_history,
+    #         dynamic_positions=dynamic_positions,
+    #     )
+    #     prices = [
+    #         PortfolioPrice(timestamp=serie.timestamp, total_value=serie.price)
+    #         for serie in time_series
+    #     ]
+    #     return PortfolioDynamicsResponse(
+    #         portfolio_id=portfolio.id, name=portfolio.name, data=prices
+    #     )

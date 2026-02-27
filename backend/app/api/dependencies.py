@@ -5,6 +5,7 @@ from app.repositories import (
     TradeRepositoryPostgres,
     UserRepositoryPostgres,
 )
+from app.repositories.analytics import AnalyticsRepository
 from app.services.analytics import AnalyticsService
 from app.services.assets import AssetService
 from app.services.auth import AuthService
@@ -45,11 +46,13 @@ def get_asset_service(session: AsyncSession = Depends(get_session)) -> AssetServ
     return AssetService(session=session)
 
 
-def get_analytics_service(
-    session: AsyncSession = Depends(get_session),
-) -> AnalyticsService:
-    return AnalyticsService(session=session)
-
-
 def get_auth_service(session: AsyncSession = Depends(get_session)) -> AuthService:
     return AuthService(session=session)
+
+
+async def get_analytics_repo(session: AsyncSession = Depends(get_session)) -> AnalyticsRepository:
+    return AnalyticsRepository(session=session)
+
+
+async def get_analytics_service(repo: AnalyticsRepository = Depends(get_analytics_repo)):
+    return AnalyticsService(repo=repo)
