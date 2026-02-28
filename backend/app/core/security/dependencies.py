@@ -1,8 +1,8 @@
 from typing import Annotated
 
-from app.api.dependencies import get_user_service
 from app.core.config import settings
 from app.models.user import User
+from app.services.dependencies import get_user_service
 from app.services.users import UserService
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
