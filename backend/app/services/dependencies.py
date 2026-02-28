@@ -2,12 +2,12 @@ from typing import Annotated
 
 from app.infrastructure.db.database import get_session
 from app.repositories import (
+    AnalyticsRepository,
     AssetRepositoryPostgres,
     PortfolioRepositoryPostgres,
     TradeRepositoryPostgres,
     UserRepositoryPostgres,
 )
-from app.repositories.analytics import AnalyticsRepository
 from app.repositories.dependencies import (
     get_analytics_repo,
     get_asset_repo,

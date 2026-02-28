@@ -1,3 +1,4 @@
+from .analytics import AnalyticsRepository
 from .asset import AssetRepositoryPostgres
 from .asset_price import AssetPriceRepositoryPostgres
 from .portfolio import PortfolioRepositoryPostgres
@@ -12,4 +13,5 @@ __all__ = [
     'RefreshSessionRepositoryPostgres',
     'TradeRepositoryPostgres',
     'UserRepositoryPostgres',
+    'AnalyticsRepository',
 ]
