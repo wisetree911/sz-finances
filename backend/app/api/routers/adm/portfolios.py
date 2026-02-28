@@ -1,4 +1,3 @@
-from app.api.dependencies import get_portfolio_service
 from app.core.security.dependencies import require_admin
 from app.schemas.portfolio import (
     PortfolioCreateAdm,
@@ -6,6 +5,7 @@ from app.schemas.portfolio import (
     PortfolioResponse,
     PortfolioUpdate,
 )
+from app.services.dependencies import get_portfolio_service
 from app.services.portfolios import PortfolioService
 from fastapi import APIRouter, Depends, status
 

@@ -1,10 +1,10 @@
-from app.api.dependencies import get_portfolio_service
 from app.core.security.dependencies import get_current_user
 from app.schemas.portfolio import (
     PortfolioCreate,
     PortfolioResponse,
     PortfolioUpdate,
 )
+from app.services.dependencies import get_portfolio_service
 from app.services.portfolios import PortfolioService
 from fastapi import APIRouter, Depends, status
 

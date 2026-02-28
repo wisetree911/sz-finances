@@ -1,6 +1,6 @@
-from app.api.dependencies import get_trade_service
 from app.core.security.dependencies import get_current_user
 from app.schemas.trade import TradeResponse
+from app.services.dependencies import get_trade_service
 from app.services.trades import TradeService
 from fastapi import APIRouter, Depends
 

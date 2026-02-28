@@ -1,4 +1,3 @@
-from app.api.dependencies import get_analytics_service
 from app.core.security.dependencies import require_admin
 from app.schemas.analytics import (
     PortfolioDynamicsResponse,
@@ -6,6 +5,7 @@ from app.schemas.analytics import (
     SectorDistributionResponse,
 )
 from app.services.analytics import AnalyticsService
+from app.services.dependencies import get_analytics_service
 from fastapi import APIRouter, Depends
 
 router = APIRouter(

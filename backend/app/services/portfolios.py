@@ -1,10 +1,10 @@
-from app.contracts.repos import PortfolioRepository
+from app.repositories.portfolio import PortfolioRepositoryPostgres
 from app.schemas.portfolio import PortfolioCreate, PortfolioUpdate
 from fastapi import HTTPException
 
 
 class PortfolioService:
-    def __init__(self, repo: PortfolioRepository):
+    def __init__(self, repo: PortfolioRepositoryPostgres):
         self.repo = repo
 
     async def get_all_portfolios(self):

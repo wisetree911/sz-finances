@@ -1,7 +1,7 @@
-from app.api.dependencies import get_asset_service
 from app.schemas.asset import AssetResponse
 from app.schemas.common.pagination import Page
 from app.services.assets import AssetService
+from app.services.dependencies import get_asset_service
 from fastapi import APIRouter, Depends, Query
 
 router = APIRouter(prefix='/assets', tags=['Assets'])

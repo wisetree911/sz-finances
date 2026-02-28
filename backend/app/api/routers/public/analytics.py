@@ -1,4 +1,3 @@
-from app.api.dependencies import get_analytics_service
 from app.core.security.dependencies import get_current_user
 from app.infrastructure.redis.deps import get_cache
 from app.infrastructure.redis.redis_cache import RedisCache
@@ -8,6 +7,7 @@ from app.schemas.analytics import (
     SectorDistributionResponse,
 )
 from app.services.analytics import AnalyticsService
+from app.services.dependencies import get_analytics_service
 from fastapi import APIRouter, Depends
 
 router = APIRouter(prefix='/analytics', tags=['Analytics'])

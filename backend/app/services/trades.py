@@ -1,10 +1,10 @@
-from app.contracts.repos import TradeRepository
+from app.repositories.trade import TradeRepositoryPostgres
 from app.schemas.trade import TradeCreate, TradeUpdate
 from fastapi import HTTPException
 
 
 class TradeService:
-    def __init__(self, repo: TradeRepository):
+    def __init__(self, repo: TradeRepositoryPostgres):
         self.repo = repo
 
     async def get_all_trades(self):

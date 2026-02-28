@@ -1,6 +1,6 @@
-from app.api.dependencies import get_user_service
 from app.core.security.dependencies import require_admin
 from app.schemas.user import UserCreate, UserResponse, UserUpdate
+from app.services.dependencies import get_user_service
 from app.services.users import UserService
 from fastapi import APIRouter, Depends, status
 
