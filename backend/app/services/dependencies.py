@@ -15,12 +15,14 @@ from app.repositories.dependencies import (
     get_trade_repo,
     get_user_repo,
 )
-from app.services.analytics import AnalyticsService
-from app.services.assets import AssetService
-from app.services.auth import AuthService
-from app.services.portfolios import PortfolioService
-from app.services.trades import TradeService
-from app.services.users import UserService
+from app.services import (
+    AnalyticsService,
+    AssetService,
+    AuthService,
+    PortfolioService,
+    TradeService,
+    UserService,
+)
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
