@@ -17,12 +17,12 @@ class AssetPriceRepositoryPostgres:
         self.session.add(obj)
         return obj
 
-    async def get_all(self) -> list[AssetPrice]:
+    async def get_all(self) -> Sequence[AssetPrice]:
         query = select(AssetPrice)
         result = await self.session.execute(query)
         return result.scalars().all()
 
-    async def get_by_id(self, asset_id: int) -> AssetPrice:
+    async def get_by_id(self, asset_id: int) -> AssetPrice | None:
         query = select(AssetPrice).where(AssetPrice.asset_id == asset_id)
         result = await self.session.execute(query)
         return result.scalar_one_or_none()
@@ -46,7 +46,7 @@ class AssetPriceRepositoryPostgres:
         result = await self.session.execute(query)
         return result.scalar_one_or_none()
 
-    async def get_prices_dict_by_ids(self, asset_ids: list[int]) -> dict[int, Decimal]:
+    async def get_prices_dict_by_ids(self, asset_ids: Sequence[int]) -> dict[int, Decimal]:
         query = (
             select(AssetPrice.asset_id, AssetPrice.price)
             .distinct(AssetPrice.asset_id)

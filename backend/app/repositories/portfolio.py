@@ -1,3 +1,5 @@
+from collections.abc import Sequence
+
 from app.models import Portfolio
 from app.schemas.portfolio import (
     PortfolioCreate,
@@ -12,24 +14,24 @@ class PortfolioRepositoryPostgres:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def create(self, payload: PortfolioCreateAdm):
+    async def create(self, payload: PortfolioCreateAdm) -> Portfolio:
         obj = Portfolio(**payload.model_dump())
         self.session.add(obj)
         await self.session.commit()
         await self.session.refresh(obj)
         return obj
 
-    async def get_all(self):
+    async def get_all(self) -> Sequence[Portfolio]:
         query = select(Portfolio)
         result = await self.session.execute(query)
         return result.scalars().all()
 
-    async def get_by_id(self, portfolio_id: int):
+    async def get_by_id(self, portfolio_id: int) -> Portfolio | None:
         query = select(Portfolio).where(Portfolio.id == portfolio_id)
         result = await self.session.execute(query)
         return result.scalar_one_or_none()
 
-    async def update(self, portfolio: Portfolio, payload: PortfolioUpdate):
+    async def update(self, portfolio: Portfolio, payload: PortfolioUpdate) -> Portfolio:
         update_data = payload.model_dump(exclude_unset=True)
         for field, value in update_data.items():
             setattr(portfolio, field, value)
@@ -37,17 +39,17 @@ class PortfolioRepositoryPostgres:
         await self.session.refresh(portfolio)
         return portfolio
 
-    async def delete(self, portfolio: Portfolio):
+    async def delete(self, portfolio: Portfolio) -> None:
         await self.session.delete(portfolio)
         await self.session.commit()
 
-    async def get_by_user_id(self, user_id: int):
+    async def get_by_user_id(self, user_id: int) -> Sequence[Portfolio]:
         query = select(Portfolio).where(Portfolio.user_id == user_id)
         result = await self.session.execute(query)
         portfolios = result.scalars().all()
         return portfolios
 
-    async def create_for_user(self, payload: PortfolioCreate, user_id: int):
+    async def create_for_user(self, payload: PortfolioCreate, user_id: int) -> Portfolio:
         obj = Portfolio(
             user_id=user_id,
             name=payload.name,

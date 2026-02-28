@@ -10,18 +10,18 @@ class RefreshSessionRepositoryPostgres:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def create(self, obj_in: RefreshSessionCreate):
+    async def create(self, obj_in: RefreshSessionCreate) -> RefreshSession:
         obj = RefreshSession(**obj_in.model_dump())
         self.session.add(obj)
         await self.session.commit()
         await self.session.refresh(obj)
         return obj
 
-    async def get_by_jti(self, jti: str):
+    async def get_by_jti(self, jti: str) -> RefreshSession | None:
         result = await self.session.execute(select(RefreshSession).where(RefreshSession.jti == jti))
         return result.scalar_one_or_none()
 
-    async def set_revoke_by_jti(self, jti: str):
+    async def set_revoke_by_jti(self, jti: str) -> None:
         await self.session.execute(
             update(RefreshSession)
             .where(RefreshSession.jti == jti)

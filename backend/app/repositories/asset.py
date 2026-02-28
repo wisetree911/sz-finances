@@ -10,24 +10,24 @@ class AssetRepositoryPostgres:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def create(self, obj_in: AssetCreate):
+    async def create(self, obj_in: AssetCreate) -> Asset:
         obj = Asset(**obj_in.model_dump())
         self.session.add(obj)
         await self.session.commit()
         await self.session.refresh(obj)
         return obj
 
-    async def get_all(self, limit: int, offset: int):
+    async def get_all(self, limit: int, offset: int) -> Sequence[Asset]:
         query = select(Asset).order_by(Asset.id).limit(limit).offset(offset)
         result = await self.session.execute(query)
         return result.scalars().all()
 
-    async def get_by_id(self, asset_id: int):
+    async def get_by_id(self, asset_id: int) -> Asset | None:
         query = select(Asset).where(Asset.id == asset_id)
         result = await self.session.execute(query)
         return result.scalar_one_or_none()
 
-    async def update(self, asset: Asset, obj_in: AssetUpdate):
+    async def update(self, asset: Asset, obj_in: AssetUpdate) -> Asset:
         update_data = obj_in.model_dump(exclude_unset=True)
         for field, value in update_data.items():
             setattr(asset, field, value)
@@ -35,11 +35,11 @@ class AssetRepositoryPostgres:
         await self.session.refresh(asset)
         return asset
 
-    async def delete(self, asset: Asset):
+    async def delete(self, asset: Asset) -> None:
         await self.session.delete(asset)
         await self.session.commit()
 
-    async def get_by_ticker(self, ticker: str):
+    async def get_by_ticker(self, ticker: str) -> Asset | None:
         query = select(Asset).where(Asset.ticker == ticker)
         result = await self.session.execute(query)
         return result.scalar_one_or_none()

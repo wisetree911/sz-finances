@@ -1,3 +1,5 @@
+from collections.abc import Sequence
+
 from app.models import User
 from app.schemas.user import UserCreate, UserUpdate
 from sqlalchemy import select
@@ -8,29 +10,29 @@ class UserRepositoryPostgres:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def create(self, obj_in: UserCreate):
+    async def create(self, obj_in: UserCreate) -> User:
         obj = User(**obj_in.model_dump())
         self.session.add(obj)
         await self.session.commit()
         await self.session.refresh(obj)
         return obj
 
-    async def get_all(self):
+    async def get_all(self) -> Sequence[User]:
         query = select(User)
         result = await self.session.execute(query)
         return result.scalars().all()
 
-    async def get_by_id(self, user_id: int):
+    async def get_by_id(self, user_id: int) -> User | None:
         query = select(User).where(User.id == user_id)
         result = await self.session.execute(query)
         return result.scalar_one_or_none()
 
-    async def get_by_email(self, email: str):
+    async def get_by_email(self, email: str) -> User | None:
         query = select(User).where(User.email == email)
         result = await self.session.execute(query)
         return result.scalar_one_or_none()
 
-    async def update(self, user: User, obj_in: UserUpdate):
+    async def update(self, user: User, obj_in: UserUpdate) -> User:
         update_data = obj_in.model_dump(exclude_unset=True)
         for field, value in update_data.items():
             setattr(user, field, value)
@@ -38,6 +40,6 @@ class UserRepositoryPostgres:
         await self.session.refresh(user)
         return user
 
-    async def delete(self, user: User):
+    async def delete(self, user: User) -> None:
         await self.session.delete(user)
         await self.session.commit()
