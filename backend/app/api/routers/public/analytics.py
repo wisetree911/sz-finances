@@ -2,7 +2,6 @@ from app.core.security.dependencies import get_current_user
 from app.infrastructure.redis.deps import get_cache
 from app.infrastructure.redis.redis_cache import RedisCache
 from app.schemas.analytics import (
-    PortfolioDynamicsResponse,
     PortfolioSnapshotResponse,
     SectorDistributionResponse,
 )
@@ -57,16 +56,16 @@ async def get_portfolio_sectors_distribution_for_user(
     return dto
 
 
-@router.get(
-    '/{portfolio_id}/dynamics/24h',
-    response_model=PortfolioDynamicsResponse,
-    summary='Динамика портфеля за последние 24 часа',
-)
-async def get_portfolio_dynamics_for_user(
-    portfolio_id: int,
-    current_user=Depends(get_current_user),
-    service: AnalyticsService = Depends(get_analytics_service),
-) -> PortfolioDynamicsResponse:
-    return await service.portfolio_dynamics_for_24h_for_user(
-        portfolio_id=portfolio_id, user_id=current_user.id
-    )
+# @router.get(
+#     '/{portfolio_id}/dynamics/24h',
+#     response_model=PortfolioDynamicsResponse,
+#     summary='Динамика портфеля за последние 24 часа',
+# )
+# async def get_portfolio_dynamics_for_user(
+#     portfolio_id: int,
+#     current_user=Depends(get_current_user),
+#     service: AnalyticsService = Depends(get_analytics_service),
+# ) -> PortfolioDynamicsResponse:
+#     return await service.portfolio_dynamics_for_24h_for_user(
+#         portfolio_id=portfolio_id, user_id=current_user.id
+#     )
