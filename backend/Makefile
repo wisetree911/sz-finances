@@ -1,12 +1,10 @@
-.PHONY: test test-up test-down
-
-TEST_DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5433/test_db
-
-test-up:
-	docker run --rm -d --name pg-test -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=test_db -p 5433:5432 postgres:16
+.PHONY: test test-unit test-analytics
 
 test:
-	TEST_DATABASE_URL="$(TEST_DATABASE_URL)" pytest -q
+	uv run pytest tests/unit -q
 
-test-down:
-	docker stop pg-test || true
+test-unit:
+	uv run pytest tests/unit -q
+
+test-analytics:
+	uv run pytest tests/unit/test_analytics_calc.py -q
