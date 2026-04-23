@@ -1,4 +1,8 @@
-from pydantic_settings import BaseSettings
+from pathlib import Path
+
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+ROOT = Path(__file__).resolve().parents[3]
 
 
 class Settings(BaseSettings):
@@ -11,9 +15,10 @@ class Settings(BaseSettings):
     REDIS_URL: str
     REDIS_PRICES_CHANNEL: str
 
-    class Config:
-        env_file = '../.env'
-        extra = 'ignore'
+    model_config = SettingsConfigDict(
+        env_file=ROOT / '.env',
+        extra='ignore',
+    )
 
 
 settings = Settings()
