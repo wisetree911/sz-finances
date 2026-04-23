@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+
 from app.api.routers.adm import routers as admin_routers
 from app.api.routers.public import routers as public_routers
 from app.core.logging import configure_logging_dev
@@ -9,18 +11,18 @@ from fastapi.middleware.cors import CORSMiddleware
 
 configure_logging_dev(log_level='INFO')
 
-app = FastAPI()
 
-
-@app.on_event('startup')
-async def startup():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     app.state.redis = create_redis()
     await app.state.redis.ping()
+    try:
+        yield
+    finally:
+        await close_redis(app.state.redis)
 
 
-@app.on_event('shutdown')
-async def shutdown():
-    await close_redis(app.state.redis)
+app = FastAPI(lifespan=lifespan)
 
 
 app.middleware('http')(request_logging_middleware)
