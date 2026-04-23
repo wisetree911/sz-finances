@@ -114,4 +114,4 @@ class AuthService:
                 role=payload.role,
             )
         )
-        return UserResponse(name=user.name, email=user.email, role=user.role)
+        return UserResponse(name=user.name, email=user.email, role=user.role, id=user.id)

@@ -23,7 +23,7 @@ class AnalyticsRepository:
         result = await self.session.execute(query)
         return result.scalars().all()
 
-    async def get_prices_dict_by_ids(self, asset_ids: list[int]) -> dict[int, Decimal]:
+    async def get_prices_dict_by_ids(self, asset_ids: Sequence[int]) -> dict[int, Decimal]:
         query = (
             select(AssetPrice.asset_id, AssetPrice.price)
             .distinct(AssetPrice.asset_id)
