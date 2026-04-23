@@ -61,7 +61,7 @@ class PortfolioPositionPrepared:
 
     @property
     def unrealized_pnl(self):
-        absolute_profit = self.market_price - self.mid_price * self.quantity
+        absolute_profit = self.market_price - self.cost_basis
         return absolute_profit
 
     @property

@@ -65,7 +65,7 @@ def build_remaining_buy_lots_fifo(
 def calc_unrealized_pnl(asset_positive_positons) -> Decimal:
     absolute_profit = Decimal(0)
     for pos in asset_positive_positons:
-        ap = pos.market_price - pos.mid_price * pos.quantity
+        ap = pos.market_price - pos.cost_basis
         absolute_profit += ap
     return absolute_profit
 
