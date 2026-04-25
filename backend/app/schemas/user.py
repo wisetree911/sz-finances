@@ -20,9 +20,10 @@ class UserCreate(UserFields):
     hashed_password: str | None = None
 
 
-class UserUpdate(UserFields):
+class UserUpdate(APIModel):
     name: str | None = None
     email: EmailStr | None = None
+    role: Role | None = None
 
 
 class UserResponse(UserFields):

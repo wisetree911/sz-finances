@@ -25,7 +25,7 @@ class AssetCreate(AssetFields):
     pass
 
 
-class AssetUpdate(AssetFields):
+class AssetUpdate(APIModel):
     ticker: Ticker | None = None
     full_name: AssetFullName | None = None
     type: AssetType | None = None

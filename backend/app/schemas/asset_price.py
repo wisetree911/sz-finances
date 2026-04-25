@@ -15,7 +15,7 @@ class AssetPriceCreate(AssetPriceBase):
     pass
 
 
-class AssetPriceUpdate(AssetPriceBase):
+class AssetPriceUpdate(BaseModel):
     asset_id: int | None = None
     price: Decimal | None = None
     currency: str | None = None
