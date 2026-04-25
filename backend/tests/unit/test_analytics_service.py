@@ -75,6 +75,57 @@ async def test_portfolio_snapshot_basic() -> None:
 
 
 @pytest.mark.asyncio
+async def test_sector_distribution_basic() -> None:
+    portfolio = SimpleNamespace(id=1, user_id=7, name='Main', currency='RUB')
+    trades = [
+        SimpleNamespace(asset_id=1, direction='buy', quantity=Decimal('2'), price=Decimal('100')),
+        SimpleNamespace(asset_id=1, direction='buy', quantity=Decimal('1'), price=Decimal('105')),
+        SimpleNamespace(asset_id=1, direction='sell', quantity=Decimal('1'), price=Decimal('110')),
+        SimpleNamespace(asset_id=2, direction='buy', quantity=Decimal('2'), price=Decimal('150')),
+        SimpleNamespace(asset_id=2, direction='sell', quantity=Decimal('1'), price=Decimal('160')),
+        SimpleNamespace(asset_id=3, direction='buy', quantity=Decimal('1'), price=Decimal('300')),
+        SimpleNamespace(asset_id=4, direction='buy', quantity=Decimal('3'), price=Decimal('200')),
+        SimpleNamespace(asset_id=4, direction='sell', quantity=Decimal('1'), price=Decimal('210')),
+    ]
+    prices = {
+        1: Decimal('120'),
+        2: Decimal('170'),
+        3: Decimal('320'),
+        4: Decimal('190'),
+    }
+    assets = [
+        SimpleNamespace(id=1, ticker='SBER', full_name='Sberbank', sector='financials'),
+        SimpleNamespace(id=2, ticker='TCSG', full_name='TCS Group', sector='financials'),
+        SimpleNamespace(id=3, ticker='LKOH', full_name='Lukoil', sector='oil_gas'),
+        SimpleNamespace(id=4, ticker='YDEX', full_name='Yandex', sector='it'),
+    ]
+
+    repo = FakeAnalyticsRepo(
+        portfolio=portfolio,
+        trades=trades,
+        prices=prices,
+        assets=assets,
+    )
+    service = AnalyticsService(repo=repo)
+
+    response = await service.sector_distribution(portfolio_id=1)
+
+    by_sector = {position.sector: position for position in response.sectors}
+
+    assert response.portfolio_id == 1
+    assert response.market_value == Decimal('1110')
+    assert set(by_sector) == {'financials', 'oil_gas', 'it'}
+    assert by_sector['financials'].market_value == Decimal('410')
+    assert by_sector['oil_gas'].market_value == Decimal('320')
+    assert by_sector['it'].market_value == Decimal('380')
+    assert by_sector['financials'].weight_percent.quantize(Decimal('0.000001')) == Decimal(
+        '36.936937'
+    )
+    assert by_sector['oil_gas'].weight_percent.quantize(Decimal('0.000001')) == Decimal('28.828829')
+    assert by_sector['it'].weight_percent.quantize(Decimal('0.000001')) == Decimal('34.234234')
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     ('method_name', 'kwargs'),
     [
