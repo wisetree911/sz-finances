@@ -126,6 +126,103 @@ async def test_sector_distribution_basic() -> None:
 
 
 @pytest.mark.asyncio
+async def test_portfolio_snapshot_returns_empty_metrics_for_empty_portfolio() -> None:
+    portfolio = SimpleNamespace(id=1, user_id=7, name='Main', currency='RUB')
+    repo = FakeAnalyticsRepo(
+        portfolio=portfolio,
+        trades=[],
+        prices={},
+        assets=[],
+    )
+    service = AnalyticsService(repo=repo)
+
+    response = await service.portfolio_snapshot(portfolio_id=1)
+
+    assert response.portfolio_id == 1
+    assert response.positions_count == 0
+    assert response.market_value == Decimal('0')
+    assert response.cost_basis == Decimal('0')
+    assert response.unrealized_pnl == Decimal('0')
+    assert response.unrealized_return_pct == Decimal('0')
+    assert response.top_positions == []
+
+
+@pytest.mark.asyncio
+async def test_sector_distribution_for_empty_portfolio() -> None:
+    portfolio = SimpleNamespace(id=1, user_id=7, name='Main', currency='RUB')
+    repo = FakeAnalyticsRepo(
+        portfolio=portfolio,
+        trades=[],
+        prices={},
+        assets=[],
+    )
+    service = AnalyticsService(repo=repo)
+
+    response = await service.sector_distribution(portfolio_id=1)
+
+    assert response.portfolio_id == 1
+    assert response.market_value == Decimal('0')
+    assert response.sectors == []
+
+
+@pytest.mark.asyncio
+async def test_sector_distribution_for_closed_portfolio() -> None:
+    portfolio = SimpleNamespace(id=1, user_id=7, name='Main', currency='RUB')
+    trades = [
+        SimpleNamespace(asset_id=1, direction='buy', quantity=Decimal('2'), price=Decimal('100')),
+        SimpleNamespace(asset_id=1, direction='sell', quantity=Decimal('2'), price=Decimal('120')),
+        SimpleNamespace(asset_id=2, direction='buy', quantity=Decimal('1'), price=Decimal('200')),
+        SimpleNamespace(asset_id=2, direction='sell', quantity=Decimal('1'), price=Decimal('210')),
+    ]
+    repo = FakeAnalyticsRepo(
+        portfolio=portfolio,
+        trades=trades,
+        prices={1: Decimal('120'), 2: Decimal('210')},
+        assets=[
+            SimpleNamespace(id=1, ticker='SBER', full_name='Sberbank', sector='financials'),
+            SimpleNamespace(id=2, ticker='YDEX', full_name='Yandex', sector='it'),
+        ],
+    )
+    service = AnalyticsService(repo=repo)
+
+    response = await service.sector_distribution(portfolio_id=1)
+
+    assert response.portfolio_id == 1
+    assert response.market_value == Decimal('0')
+    assert response.sectors == []
+
+
+@pytest.mark.asyncio
+async def test_sector_distribution_single_sector_portfolio() -> None:
+    portfolio = SimpleNamespace(id=1, user_id=7, name='Main', currency='RUB')
+    trades = [
+        SimpleNamespace(asset_id=1, direction='buy', quantity=Decimal('2'), price=Decimal('100')),
+        SimpleNamespace(asset_id=1, direction='sell', quantity=Decimal('1'), price=Decimal('110')),
+        SimpleNamespace(asset_id=2, direction='buy', quantity=Decimal('2'), price=Decimal('150')),
+        SimpleNamespace(asset_id=2, direction='sell', quantity=Decimal('1'), price=Decimal('160')),
+    ]
+    repo = FakeAnalyticsRepo(
+        portfolio=portfolio,
+        trades=trades,
+        prices={1: Decimal('120'), 2: Decimal('170')},
+        assets=[
+            SimpleNamespace(id=1, ticker='SBER', full_name='Sberbank', sector='financials'),
+            SimpleNamespace(id=2, ticker='TCSG', full_name='TCS Group', sector='financials'),
+        ],
+    )
+    service = AnalyticsService(repo=repo)
+
+    response = await service.sector_distribution(portfolio_id=1)
+
+    assert response.portfolio_id == 1
+    assert response.market_value == Decimal('290')
+    assert len(response.sectors) == 1
+    assert response.sectors[0].sector == 'financials'
+    assert response.sectors[0].market_value == Decimal('290')
+    assert response.sectors[0].weight_percent == Decimal('100')
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     ('method_name', 'kwargs'),
     [
@@ -133,9 +230,7 @@ async def test_sector_distribution_basic() -> None:
         ('portfolio_snapshot_for_user', {'portfolio_id': 1, 'user_id': 7}),
     ],
 )
-async def test_portfolio_snapshot_returns_empty_metrics_for_fully_closed_portfolio(
-    method_name: str, kwargs: dict
-) -> None:
+async def test_portfolio_snapshot_for_closed_portfolio(method_name: str, kwargs: dict) -> None:
     portfolio = SimpleNamespace(id=1, user_id=7, name='Main', currency='RUB')
     trades = [
         SimpleNamespace(
