@@ -100,7 +100,7 @@ def build_sector_positions(trades: list[TradeDTO], current_prices, assets) -> li
         if pos.sector not in sector_to_pos:
             sector_to_pos[pos.sector] = SectorPosition(sector=pos.sector, market_value=Decimal(0))
 
-        sector_to_pos[pos.sector].market_value = pos.market_price
+        sector_to_pos[pos.sector].market_value += pos.market_price
 
     return sector_to_pos.values()
 
