@@ -22,6 +22,8 @@ explicit_package_bases = true
 ignore_missing_imports = true
 show_error_codes = true
 pretty = true
+plugins = ["pydantic.mypy"]
+
 
 [project]
 name = "sz-finances"
