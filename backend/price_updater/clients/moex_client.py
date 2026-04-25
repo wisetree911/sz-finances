@@ -58,5 +58,5 @@ class MoexClient:
 
         return prices
 
-    async def get_security_info(self, ticker: str) -> dict:
-        pass
+    # async def get_security_info(self, ticker: str) -> dict:
+    #     pass

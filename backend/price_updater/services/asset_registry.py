@@ -13,5 +13,5 @@ class AssetRegistry:
     def get_all(self) -> dict:
         return self.assets
 
-    def get_ticker(self, asset_id: int) -> str:
+    def get_ticker(self, asset_id: int) -> str | None:
         return self.assets.get(asset_id)

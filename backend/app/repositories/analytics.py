@@ -1,4 +1,4 @@
-from collections.abc import Sequence
+from collections.abc import Iterable, Sequence
 from decimal import Decimal
 
 from app.models.asset import Asset
@@ -23,7 +23,7 @@ class AnalyticsRepository:
         result = await self.session.execute(query)
         return result.scalars().all()
 
-    async def get_prices_dict_by_ids(self, asset_ids: Sequence[int]) -> dict[int, Decimal]:
+    async def get_prices_dict_by_ids(self, asset_ids: Iterable[int]) -> dict[int, Decimal]:
         query = (
             select(AssetPrice.asset_id, AssetPrice.price)
             .distinct(AssetPrice.asset_id)
@@ -34,7 +34,7 @@ class AnalyticsRepository:
         rows = result.all()
         return {asset_id: price for asset_id, price in rows}
 
-    async def get_assets_by_ids(self, ids: list[int]) -> Sequence[Asset]:
+    async def get_assets_by_ids(self, ids: Iterable[int]) -> Sequence[Asset]:
         query = select(Asset).where(Asset.id.in_(ids))
         result = await self.session.execute(query)
         rows = result.scalars().all()

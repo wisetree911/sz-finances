@@ -15,7 +15,7 @@ from app.analytics.models import (
 def build_remaining_buy_lots_fifo(
     trades: list[TradeDTO], current_prices, assets
 ) -> list[PortfolioPositionPrepared]:
-    id_to_lot = {}
+    id_to_lot: dict[int, deque] = {}
     for t in trades:
         if t.asset_id not in id_to_lot:
             id_to_lot[t.asset_id] = deque()
@@ -24,11 +24,11 @@ def build_remaining_buy_lots_fifo(
         elif t.direction == 'sell':
             left_to_sell = t.quantity
 
-            while left_to_sell != 0:
+            while left_to_sell != Decimal('0'):
                 left_in_lot = id_to_lot[t.asset_id][0]['qty']
                 if left_in_lot > left_to_sell:
                     left_in_lot -= left_to_sell
-                    left_to_sell = 0
+                    left_to_sell = Decimal('0')
                     id_to_lot[t.asset_id][0]['qty'] = left_in_lot
                 elif left_in_lot < left_to_sell:
                     left_to_sell -= left_in_lot
@@ -42,7 +42,7 @@ def build_remaining_buy_lots_fifo(
 
     positive_assets = []
     for asset_id, lots in id_to_lot.items():
-        asset_lots = deque()
+        asset_lots: deque[Lot] = deque()
         for lot in lots:
             asset_lots.append(Lot(qty=lot['qty'], price=lot['price']))
         positive_assets.append(
@@ -102,7 +102,7 @@ def build_sector_positions(trades: list[TradeDTO], current_prices, assets) -> li
 
         sector_to_pos[pos.sector].market_value += pos.market_price
 
-    return sector_to_pos.values()
+    return list(sector_to_pos.values())
 
 
 def build_dynamics_positions(trades: list[TradeDTO]):

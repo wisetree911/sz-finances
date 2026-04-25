@@ -3,7 +3,6 @@ from collections.abc import Sequence
 from app.models import Portfolio
 from app.schemas.portfolio import (
     PortfolioCreate,
-    PortfolioCreateAdm,
     PortfolioUpdate,
 )
 from sqlalchemy import select
@@ -14,7 +13,7 @@ class PortfolioRepositoryPostgres:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def create(self, payload: PortfolioCreateAdm) -> Portfolio:
+    async def create(self, payload: PortfolioCreate) -> Portfolio:
         obj = Portfolio(**payload.model_dump())
         self.session.add(obj)
         await self.session.commit()
