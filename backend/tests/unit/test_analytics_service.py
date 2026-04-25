@@ -26,6 +26,55 @@ class FakeAnalyticsRepo:
 
 
 @pytest.mark.asyncio
+async def test_portfolio_snapshot_basic() -> None:
+    portfolio = SimpleNamespace(id=1, user_id=7, name='Main', currency='RUB')
+    trades = [
+        SimpleNamespace(asset_id=1, direction='buy', quantity=Decimal('2'), price=Decimal('100')),
+        SimpleNamespace(asset_id=1, direction='buy', quantity=Decimal('1'), price=Decimal('105')),
+        SimpleNamespace(asset_id=1, direction='sell', quantity=Decimal('1'), price=Decimal('110')),
+        SimpleNamespace(asset_id=2, direction='buy', quantity=Decimal('1'), price=Decimal('50')),
+        SimpleNamespace(asset_id=3, direction='buy', quantity=Decimal('3'), price=Decimal('200')),
+        SimpleNamespace(asset_id=3, direction='sell', quantity=Decimal('1'), price=Decimal('210')),
+        SimpleNamespace(asset_id=4, direction='buy', quantity=Decimal('4'), price=Decimal('60')),
+        SimpleNamespace(asset_id=4, direction='buy', quantity=Decimal('1'), price=Decimal('65')),
+        SimpleNamespace(asset_id=4, direction='sell', quantity=Decimal('2'), price=Decimal('70')),
+        SimpleNamespace(asset_id=5, direction='buy', quantity=Decimal('2'), price=Decimal('150')),
+    ]
+    prices = {
+        1: Decimal('120'),
+        2: Decimal('80'),
+        3: Decimal('190'),
+        4: Decimal('75'),
+        5: Decimal('140'),
+    }
+    assets = [
+        SimpleNamespace(id=1, ticker='SBER', full_name='Sberbank', sector='financials'),
+        SimpleNamespace(id=2, ticker='LKOH', full_name='Lukoil', sector='oil_gas'),
+        SimpleNamespace(id=3, ticker='YDEX', full_name='Yandex', sector='it'),
+        SimpleNamespace(id=4, ticker='MGNT', full_name='Magnit', sector='consumer'),
+        SimpleNamespace(id=5, ticker='PHOR', full_name='PhosAgro', sector='chemicals'),
+    ]
+
+    repo = FakeAnalyticsRepo(
+        portfolio=portfolio,
+        trades=trades,
+        prices=prices,
+        assets=assets,
+    )
+    service = AnalyticsService(repo=repo)
+
+    response = await service.portfolio_snapshot(portfolio_id=1)
+
+    assert response.portfolio_id == 1
+    assert response.positions_count == 5
+    assert response.market_value == Decimal('1205')
+    assert response.cost_basis == Decimal('1140')
+    assert response.unrealized_pnl == Decimal('65')
+    assert response.unrealized_return_pct.quantize(Decimal('0.000001')) == Decimal('5.701754')
+    assert [pos.ticker for pos in response.top_positions] == ['YDEX', 'PHOR', 'SBER']
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     ('method_name', 'kwargs'),
     [
