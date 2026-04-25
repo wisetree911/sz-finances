@@ -2,7 +2,6 @@ from decimal import Decimal
 from types import SimpleNamespace
 
 import pytest
-
 from app.services.analytics import AnalyticsService
 
 
