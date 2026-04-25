@@ -36,6 +36,8 @@ class AnalyticsService:
         portfolio_positions: list[PortfolioPositionPrepared] = build_remaining_buy_lots_fifo(
             trades=trade_dtos, current_prices=asset_market_prices, assets=assets
         )
+        if not portfolio_positions:
+            return PortfolioSnapshotResponse.empty(portfolio)
         cost_basis = calc_cost_basis(asset_positive_positons=portfolio_positions)
         unrealized_pnl = calc_unrealized_pnl(asset_positive_positons=portfolio_positions)
         market_price = calc_market_value(asset_positive_positons=portfolio_positions)
@@ -93,6 +95,8 @@ class AnalyticsService:
         portfolio_positions: list[PortfolioPositionPrepared] = build_remaining_buy_lots_fifo(
             trades=trade_dtos, current_prices=asset_market_prices, assets=assets
         )
+        if not portfolio_positions:
+            return PortfolioSnapshotResponse.empty(portfolio)
         cost_basis = calc_cost_basis(asset_positive_positons=portfolio_positions)
         unrealized_pnl = calc_unrealized_pnl(asset_positive_positons=portfolio_positions)
         market_price = calc_market_value(asset_positive_positons=portfolio_positions)
