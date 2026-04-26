@@ -127,34 +127,7 @@ class AnalyticsService:
             raise HTTPException(404, 'SZ portfolio not found')
         if portfolio.user_id != user_id:
             raise HTTPException(404, 'SZ portfolio not found')
-        portfolio_trades = await self.an_repo.get_trades_by_portfolio_id(portfolio_id)
-        if not portfolio_trades:
-            return SectorDistributionResponse.empty(portfolio)
-        asset_ids = {trade.asset_id for trade in portfolio_trades}
-        market_prices = await self.an_repo.get_prices_dict_by_ids(asset_ids)
-        assets = await self.an_repo.get_assets_by_ids(asset_ids)
-        trade_dtos = [TradeDTO.from_orm(trade) for trade in portfolio_trades]
-        sector_positions: list[SectorPosition] = build_sector_positions(
-            trades=trade_dtos, current_prices=market_prices, assets=assets
-        )
-        portfolio_market_value = sum(pos.market_value for pos in sector_positions)
-
-        secs: list[SectorDistributionPosition] = [
-            SectorDistributionPosition(
-                sector=pos.sector,
-                market_value=pos.market_value,
-                weight_percent=pos.market_value / portfolio_market_value * 100,
-            )
-            for pos in sector_positions
-        ]
-
-        return SectorDistributionResponse(
-            portfolio_id=portfolio.id,
-            name=portfolio.name,
-            market_value=portfolio_market_value,
-            currency=portfolio.currency,
-            sectors=secs,
-        )
+        return await self.sector_distribution(portfolio_id=portfolio_id)
 
     # async def portfolio_dynamics_for_24h(self, portfolio_id: int) -> PortfolioDynamicsResponse:
     #     portfolio = await self.an_repo.get_portfolio(portfolio_id)
