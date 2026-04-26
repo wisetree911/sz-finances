@@ -9,7 +9,7 @@ from app.infrastructure.db.database import Base, get_session
 from app.main import app
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy import text
-from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import NullPool
 
 test_engine = create_async_engine(
@@ -58,6 +58,13 @@ async def reset_database() -> AsyncIterator[None]:
     await _truncate_all_tables()
     yield
     await _truncate_all_tables()
+
+
+@pytest.fixture
+async def db_session() -> AsyncIterator[AsyncSession]:
+    async with test_session_maker() as session:
+        yield session
+        await session.rollback()
 
 
 @pytest.fixture
