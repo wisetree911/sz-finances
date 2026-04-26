@@ -1,3 +1,4 @@
+from app.core.security.dependencies import require_admin
 from app.schemas.trade import TradeCreate, TradeResponse, TradeUpdate
 from app.services.dependencies import get_trade_service
 from app.services.trades import TradeService
@@ -6,6 +7,7 @@ from fastapi import APIRouter, Depends, status
 router = APIRouter(
     prefix='/trades',
     tags=['Trades'],
+    dependencies=[Depends(require_admin)],
 )
 
 
