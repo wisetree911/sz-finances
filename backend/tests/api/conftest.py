@@ -4,14 +4,29 @@ from collections.abc import AsyncIterator
 
 import app.models  # noqa: F401
 import pytest
-from app.infrastructure.db.database import Base, engine
+from app.core.config import settings
+from app.infrastructure.db.database import Base, get_session
 from app.main import app
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy import text
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+from sqlalchemy.pool import NullPool
+
+test_engine = create_async_engine(
+    settings.DATABASE_URL,
+    echo=False,
+    poolclass=NullPool,
+)
+test_session_maker = async_sessionmaker(test_engine, expire_on_commit=False)
+
+
+async def override_get_session() -> AsyncIterator[object]:
+    async with test_session_maker() as session:
+        yield session
 
 
 def _ensure_test_database() -> None:
-    database_name = engine.url.database or ''
+    database_name = test_engine.url.database or ''
     if 'test' not in database_name:
         raise RuntimeError(
             'API tests require DATABASE_URL pointing to a dedicated test database '
@@ -25,20 +40,22 @@ async def _truncate_all_tables() -> None:
         return
 
     joined = ', '.join(f'"{table_name}"' for table_name in table_names)
-    async with engine.begin() as conn:
+    async with test_engine.begin() as conn:
         await conn.execute(text(f'TRUNCATE TABLE {joined} RESTART IDENTITY CASCADE'))
 
 
 @pytest.fixture(scope='session', autouse=True)
 async def prepare_database() -> AsyncIterator[None]:
     _ensure_test_database()
-    async with engine.begin() as conn:
+    app.dependency_overrides[get_session] = override_get_session
+    async with test_engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
     yield
-    async with engine.begin() as conn:
+    app.dependency_overrides.pop(get_session, None)
+    async with test_engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
-    await engine.dispose()
+    await test_engine.dispose()
 
 
 @pytest.fixture(autouse=True)
