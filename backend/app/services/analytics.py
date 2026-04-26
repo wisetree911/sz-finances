@@ -84,56 +84,7 @@ class AnalyticsService:
             raise HTTPException(404, 'SZ portfolio not found')
         if portfolio.user_id != user_id:
             raise HTTPException(404, 'SZ portfolio not found')
-        portfolio_trades = await self.an_repo.get_trades_by_portfolio_id(portfolio_id)
-        if not portfolio_trades:
-            return PortfolioSnapshotResponse.empty(portfolio)
-        asset_ids = {trade.asset_id for trade in portfolio_trades}
-        asset_market_prices = await self.an_repo.get_prices_dict_by_ids(asset_ids)
-        trade_dtos = [TradeDTO.from_orm(trade) for trade in portfolio_trades]
-
-        assets = await self.an_repo.get_assets_by_ids(asset_ids)
-        portfolio_positions: list[PortfolioPositionPrepared] = build_remaining_buy_lots_fifo(
-            trades=trade_dtos, current_prices=asset_market_prices, assets=assets
-        )
-        if not portfolio_positions:
-            return PortfolioSnapshotResponse.empty(portfolio)
-        cost_basis = calc_cost_basis(asset_positive_positons=portfolio_positions)
-        unrealized_pnl = calc_unrealized_pnl(asset_positive_positons=portfolio_positions)
-        market_price = calc_market_value(asset_positive_positons=portfolio_positions)
-
-        top_positions = [
-            TopPosition(
-                asset_id=pos.asset_id,
-                ticker=pos.ticker,
-                full_name=pos.name,
-                quantity=pos.quantity,
-                avg_buy_price=pos.mid_price,
-                asset_market_price=pos.asset_market_price,
-                market_value=pos.market_price,
-                unrealized_pnl=pos.unrealized_pnl,
-                unrealized_return_pct=pos.unrealized_return_pct,
-                weight_pct=pos.market_price / market_price * 100,
-            )
-            for pos in sorted(
-                portfolio_positions,
-                key=lambda pos: pos.market_price / market_price * 100,
-                reverse=True,
-            )[:3]
-        ]
-
-        return PortfolioSnapshotResponse(
-            portfolio_id=portfolio.id,
-            name=portfolio.name,
-            market_value=market_price,
-            unrealized_pnl=unrealized_pnl,
-            unrealized_return_pct=calc_unrealized_return_pct(
-                unrealized_pnl=unrealized_pnl, cost_basis=cost_basis
-            ),
-            cost_basis=cost_basis,
-            currency=portfolio.currency,
-            positions_count=len(portfolio_positions),
-            top_positions=top_positions,
-        )
+        return await self.portfolio_snapshot(portfolio_id=portfolio_id)
 
     async def sector_distribution(self, portfolio_id: int) -> SectorDistributionResponse:
         portfolio = await self.an_repo.get_portfolio(portfolio_id)
