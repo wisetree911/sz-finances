@@ -48,13 +48,8 @@ async def _truncate_all_tables() -> None:
 async def prepare_database() -> AsyncIterator[None]:
     _ensure_test_database()
     app.dependency_overrides[get_session] = override_get_session
-    async with test_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
-        await conn.run_sync(Base.metadata.create_all)
     yield
     app.dependency_overrides.pop(get_session, None)
-    async with test_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
     await test_engine.dispose()
 
 
